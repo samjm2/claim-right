@@ -224,6 +224,57 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               </div>
             </div>
           </div>
+
+          {/* appeal builder - the final output, user can edit before submitting */}
+          <div style={{marginTop:"48px"}}>
+            <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Appeal draft</h2>
+            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>Generated from verified facts only. Review, edit, and customize before sending.</p>
+
+            {/* the letter itself */}
+            <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"32px",marginBottom:"24px"}}>
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>Dear Appeals Department,</p>
+
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>I am writing to request an internal review of the denial of my claim for a knee MRI performed on July 2, 2026, at Lakeshore Imaging Center. My claim number is CLM-2026-48822, and my member ID is M-772910.</p>
+
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>Your denial letter, dated July 14, 2026, states that the claim was denied because "no prior authorization was received." However, I have an authorization confirmation (PA-48391) indicating that the MRI was approved and the authorization was valid during the service date of July 2, 2026.</p>
+
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>The timeline of events is as follows:
+              <br/>• June 18, 2026: Physician ordered MRI
+              <br/>• June 20, 2026: Authorization PA-48391 approved
+              <br/>• July 2, 2026: MRI performed
+              <br/>• July 10, 2026: Claim processed
+              <br/>• July 14, 2026: Claim denied</p>
+
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>The authorization confirmation shows that the authorization was valid from June 20, 2026, to July 20, 2026. The MRI was performed on July 2, 2026, which falls within this validity period.</p>
+
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>I respectfully request that you review this claim in light of the authorization documentation I have provided. I believe the claim should be approved, and I request that the $4,800 be paid in accordance with my plan benefits.</p>
+
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>Thank you for your prompt attention to this matter. Please contact me if you need any additional information.</p>
+
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:0}}>Sincerely,
+              <br/>Maya Rodriguez
+              <br/>Member ID: M-772910</p>
+            </div>
+
+            {/* edit actions */}
+            <div style={{display:"flex",gap:"12px",marginBottom:"24px"}}>
+              <button style={{padding:"10px 16px",background:"#0a3a4a",color:"#f5fafc",border:"none",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Edit letter</button>
+              <button style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Regenerate wording</button>
+              <button style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Remove facts</button>
+              <button style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Review citations</button>
+            </div>
+
+            {/* supporting docs section */}
+            <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px"}}>
+              <h3 style={{fontSize:"14px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a8a93",margin:"0 0 16px"}}>Attachments</h3>
+              <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+                <div style={{fontSize:"14px",color:"#0a3a4a"}}>1. Authorization Confirmation (PA-48391)</div>
+                <div style={{fontSize:"14px",color:"#0a3a4a"}}>2. Explanation of Benefits</div>
+                <div style={{fontSize:"14px",color:"#0a3a4a"}}>3. Medical Bill</div>
+                <div style={{fontSize:"14px",color:"#0a3a4a"}}>4. Physician Referral</div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
