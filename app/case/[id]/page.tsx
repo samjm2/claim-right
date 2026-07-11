@@ -141,6 +141,46 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               </div>
             </div>
           </div>
+
+          {/* timeline - just dates and events connected by a line */}
+          <div style={{marginTop:"48px"}}>
+            <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Case timeline</h2>
+            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 40px"}}>Assembled by connecting dates across all five documents.</p>
+
+            <div style={{maxWidth:"760px",display:"flex",flexDirection:"column"}}>
+              {/* timeline node 1 */}
+              <div style={{display:"grid",gridTemplateColumns:"120px 24px 1fr",gap:"0 20px"}}>
+                <div style={{textAlign:"right",paddingBottom:"40px"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#0a3a4a"}}>June 18</span></div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><span style={{width:"12px",height:"12px",borderRadius:"50%",background:"#008bb2",border:"3px solid #dbeef5",flexShrink:0}}></span><span style={{width:"1px",flex:1,background:"#dce7ec"}}></span></div>
+                <div style={{paddingBottom:"40px"}}><div style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Physician ordered MRI</div><span style={{display:"inline-block",marginTop:"6px",fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Referral, p.1</span></div>
+
+                {/* node 2 */}
+                <div style={{textAlign:"right",paddingBottom:"40px"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#0a3a4a"}}>June 20</span></div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><span style={{width:"12px",height:"12px",borderRadius:"50%",background:"#3f7a4a",border:"3px solid #e2eee4",flexShrink:0}}></span><span style={{width:"1px",flex:1,background:"#dce7ec"}}></span></div>
+                <div style={{paddingBottom:"40px"}}><div style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Authorization PA-48391 approved</div><div style={{fontSize:"13px",color:"#40525c",marginTop:"2px"}}>Valid June 20 – July 20, 2026</div><span style={{display:"inline-block",marginTop:"6px",fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Authorization Confirmation, p.1</span></div>
+
+                {/* node 3 */}
+                <div style={{textAlign:"right",paddingBottom:"40px"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#0a3a4a"}}>July 2</span></div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><span style={{width:"12px",height:"12px",borderRadius:"50%",background:"#008bb2",border:"3px solid #dbeef5",flexShrink:0}}></span><span style={{width:"1px",flex:1,background:"#dce7ec"}}></span></div>
+                <div style={{paddingBottom:"40px"}}><div style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>MRI performed at Lakeshore Imaging Center</div><div style={{display:"flex",gap:"6px",marginTop:"6px"}}><span style={{fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>EOB, p.1</span><span style={{fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Medical Bill, p.1</span></div></div>
+
+                {/* node 4 */}
+                <div style={{textAlign:"right",paddingBottom:"40px"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#0a3a4a"}}>July 10</span></div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><span style={{width:"12px",height:"12px",borderRadius:"50%",background:"#008bb2",border:"3px solid #dbeef5",flexShrink:0}}></span><span style={{width:"1px",flex:1,background:"#dce7ec"}}></span></div>
+                <div style={{paddingBottom:"40px"}}><div style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Claim processed</div><span style={{display:"inline-block",marginTop:"6px",fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>EOB, p.1</span></div>
+
+                {/* node 5 */}
+                <div style={{textAlign:"right",paddingBottom:"40px"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#0a3a4a"}}>July 14</span></div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><span style={{width:"12px",height:"12px",borderRadius:"50%",background:"#a33a3a",border:"3px solid #f3dede",flexShrink:0}}></span><span style={{width:"1px",flex:1,background:"#dce7ec"}}></span></div>
+                <div style={{paddingBottom:"40px"}}><div style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Claim denied — "no prior authorization received"</div><span style={{display:"inline-block",marginTop:"6px",fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span></div>
+
+                {/* node 6 - final */}
+                <div style={{textAlign:"right"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#a33a3a"}}>September 8</span></div>
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><span style={{width:"12px",height:"12px",borderRadius:"50%",background:"#ffffff",border:"2px solid #a33a3a",flexShrink:0}}></span></div>
+                <div><div style={{fontSize:"15px",fontWeight:"600",color:"#a33a3a"}}>Appeal deadline stated</div><span style={{display:"inline-block",marginTop:"6px",fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
