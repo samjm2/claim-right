@@ -1,10 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileText, Check, Loader, Zap, Sparkles } from "lucide-react";
+import { processUploadedFiles } from "@/app/actions/upload";
+import { CaseDocument, ExtractedFact } from "@/lib/types";
 
 type Step = "create" | "upload";
 
@@ -17,15 +20,35 @@ export default function NewCasePage() {
   const [insurance, setInsurance] = useState("Employer-sponsored private insurance");
   const [treated, setTreated] = useState(true);
   const [urgent, setUrgent] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [analyzing, setAnalyzing] = useState(false);
   const [done, setDone] = useState(false);
+  const [uploadedDocs, setUploadedDocs] = useState<CaseDocument[]>([]);
+  const [extractedFacts, setExtractedFacts] = useState<ExtractedFact[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // mock upload/analysis delay
+  // TODO: wire up caseId from form data, rn just using placeholder
   const handleUpload = async () => {
+    if (selectedFiles.length === 0) return;
     setAnalyzing(true);
-    await new Promise((r) => setTimeout(r, 2500));
-    setAnalyzing(false);
-    setDone(true);
+    try {
+      const formData = new FormData();
+      selectedFiles.forEach((file) => formData.append("files", file));
+      const result = await processUploadedFiles(formData, "case-placeholder-id");
+      setUploadedDocs(result.docs);
+      setExtractedFacts(result.facts);
+      setAnalyzing(false);
+      setDone(true);
+    } catch (e) {
+      console.error("Upload failed:", e);
+      setAnalyzing(false);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFiles(Array.from(e.target.files));
+    }
   };
 
   return (
@@ -46,9 +69,7 @@ export default function NewCasePage() {
                 background: "linear-gradient(135deg, #006e8e 0%, #008bb2 45%, #0ea5cf 100%)",
               }}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
+              <Check width="15" height="15" color="#fff" strokeWidth={2} />
             </div>
             <span className="text-lg font-semibold" style={{ color: "#0a3a4a" }}>
               ClaimRight
@@ -209,44 +230,73 @@ export default function NewCasePage() {
             </p>
 
             {!done && (
-              <div className="flex flex-col gap-3 mb-8">
-                {docs.map((doc, i) => (
-                  <div key={i} className="flex items-center gap-4 bg-white rounded-lg border p-4" style={{ borderColor: "#dce7ec" }}>
-                    <div className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0" style={{ background: "#eef7fb" }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008bb2" strokeWidth="1.5">
-                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                        <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-base font-semibold" style={{ color: "#0a3a4a" }}>
-                        {doc.name}
-                      </div>
-                      {doc.status === "processing" && (
-                        <div className="text-sm" style={{ color: "#7a8a93" }}>
-                          Processing...
+              <>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept=".pdf"
+                  onChange={handleFileSelect}
+                  style={{ display: "none" }}
+                />
+
+                <div className="flex flex-col gap-3 mb-8">
+                  {selectedFiles.length > 0 ? (
+                    <>
+                      {selectedFiles.map((file, i) => (
+                        <div
+                          key={i}
+                          className="rise lift flex items-center gap-4 bg-white rounded-lg border p-4"
+                          style={{ borderColor: "#dce7ec", animationDelay: `${i * 60}ms` }}
+                        >
+                          <div className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0" style={{ background: "#eef7fb" }}>
+                            <FileText width={20} height={20} color="#008bb2" strokeWidth={1.5} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-base font-semibold truncate" style={{ color: "#0a3a4a" }}>
+                              {file.name}
+                            </div>
+                            <div className="text-sm" style={{ color: "#7a8a93" }}>
+                              {(file.size / 1024 / 1024).toFixed(2)} MB
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            {analyzing ? (
+                              <>
+                                <Loader width={16} height={16} color="#008bb2" className="animate-spin" />
+                                <span className="text-xs font-medium" style={{ color: "#7a8a93" }}>Reading</span>
+                              </>
+                            ) : (
+                              <>
+                                <Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />
+                                <span className="text-xs font-medium" style={{ color: "#7a8a93" }}>Ready</span>
+                              </>
+                            )}
+                          </div>
                         </div>
+                      ))}
+                      {!analyzing && (
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="text-sm font-medium self-start mt-1"
+                          style={{ color: "#008bb2", background: "none", border: "none", cursor: "pointer" }}
+                        >
+                          + Add more documents
+                        </button>
                       )}
-                      {doc.status === "done" && (
-                        <div className="text-sm" style={{ color: "#7a8a93" }}>
-                          Ready
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {doc.status === "done" && (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2">
-                          <path d="M20 6 9 17l-5-5"></path>
-                        </svg>
-                      )}
-                      {doc.status === "processing" && (
-                        <span className="w-2 h-2 rounded-full" style={{ background: "#008bb2", animation: "pulse 1.2s ease-in-out infinite" }}></span>
-                      )}
-                      {doc.status && <span className="text-xs font-medium" style={{ color: "#7a8a93" }}>{doc.status === "done" ? "Verified" : "Reading"}</span>}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="lift flex items-center justify-center gap-2 w-full h-24 rounded-lg border-2 border-dashed"
+                      style={{ borderColor: "#c6d4db", background: "#fafbfc", cursor: "pointer" }}
+                    >
+                      <Zap width={20} height={20} color="#008bb2" />
+                      <span style={{ color: "#40525c", fontSize: "0.95rem" }}>Click to select your PDF documents</span>
+                    </button>
+                  )}
+                </div>
+              </>
             )}
 
             {!analyzing && !done && (
@@ -254,22 +304,32 @@ export default function NewCasePage() {
                 <button onClick={() => setStep("create")} className="bg-none border-none text-base font-medium" style={{ color: "#40525c", cursor: "pointer" }}>
                   ← Back
                 </button>
-                <Button
-                  onClick={handleUpload}
-                  size="lg"
-                  className="h-12 px-8 text-sm font-semibold tracking-wider uppercase"
-                  style={{ background: "#0a3a4a", color: "#f5fafc" }}
-                >
-                  Upload sample documents
-                </Button>
+                {/* one button, two jobs: pick files first, then analyze what got picked */}
+                {selectedFiles.length === 0 ? (
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    size="lg"
+                    className="press h-12 px-8 text-sm font-semibold tracking-wider uppercase"
+                    style={{ background: "#0a3a4a", color: "#f5fafc" }}
+                  >
+                    Select documents
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleUpload}
+                    size="lg"
+                    className="press h-12 px-8 text-sm font-semibold tracking-wider uppercase"
+                    style={{ background: "#0a3a4a", color: "#f5fafc" }}
+                  >
+                    Analyze {selectedFiles.length} {selectedFiles.length === 1 ? "document" : "documents"}
+                  </Button>
+                )}
               </div>
             )}
 
             {analyzing && (
               <div className="mt-8 rounded-lg border p-4 flex items-center gap-3" style={{ borderColor: "rgba(0,139,178,0.35)", background: "rgba(0,139,178,0.05)" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#008bb2" strokeWidth="2">
-                  <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
-                </svg>
+                <Sparkles width="16" height="16" color="#008bb2" className="animate-spin" />
                 <span className="text-sm font-medium" style={{ color: "#006e8e" }}>
                   Analyzing documents...
                 </span>
@@ -277,24 +337,22 @@ export default function NewCasePage() {
             )}
 
             {done && (
-              <Link href="/case/sample">
+              <Link href="/case/sample" className="block">
                 <div
-                  className="mt-8 rounded-2xl border p-6 cursor-pointer relative overflow-hidden"
+                  className="rise lift mt-8 rounded-2xl border p-6 cursor-pointer relative overflow-hidden"
                   style={{ borderColor: "rgba(0,139,178,0.35)", background: "#f5fafc", boxShadow: "0 4px 24px rgba(0,110,142,0.12)" }}
                 >
                   <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "linear-gradient(135deg, #006e8e 0%, #008bb2 45%, #0ea5cf 100%)" }}></div>
 
                   <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full mb-4 text-xs font-semibold border" style={{ background: "#eef7fb", borderColor: "#b9e1ed", color: "#008bb2" }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
-                    </svg>
+                    <Sparkles width="12" height="12" />
                     Analysis complete
                   </div>
 
                   <div className="grid grid-cols-4 gap-4 mb-6">
                     <div>
                       <div className="text-2xl font-light" style={{ color: "#0a3a4a" }}>
-                        5
+                        {uploadedDocs.length}
                       </div>
                       <div className="text-xs" style={{ color: "#40525c" }}>
                         documents analyzed
@@ -302,15 +360,16 @@ export default function NewCasePage() {
                     </div>
                     <div>
                       <div className="text-2xl font-light" style={{ color: "#0a3a4a" }}>
-                        28
+                        {extractedFacts.length}
                       </div>
                       <div className="text-xs" style={{ color: "#40525c" }}>
                         facts extracted
                       </div>
                     </div>
                     <div>
+                      {/* discrepancy engine is phase 4, not built yet */}
                       <div className="text-2xl font-light" style={{ color: "#a33a3a" }}>
-                        1
+                        0
                       </div>
                       <div className="text-xs" style={{ color: "#40525c" }}>
                         major discrepancy detected
@@ -318,7 +377,7 @@ export default function NewCasePage() {
                     </div>
                     <div>
                       <div className="text-2xl font-light" style={{ color: "#b08430" }}>
-                        2
+                        {extractedFacts.filter((f) => f.status === "unclear").length}
                       </div>
                       <div className="text-xs" style={{ color: "#40525c" }}>
                         facts need confirmation
@@ -326,9 +385,10 @@ export default function NewCasePage() {
                     </div>
                   </div>
 
-                  <button className="h-12 px-8 text-sm font-semibold tracking-wider uppercase rounded" style={{ background: "#0a3a4a", color: "#f5fafc", border: "none", cursor: "pointer" }}>
+                  {/* whole card is the link, so this is a styled span not a nested button */}
+                  <span className="inline-flex items-center h-12 px-8 text-sm font-semibold tracking-wider uppercase rounded" style={{ background: "#0a3a4a", color: "#f5fafc" }}>
                     Open case dashboard
-                  </button>
+                  </span>
                 </div>
               </Link>
             )}
@@ -338,11 +398,3 @@ export default function NewCasePage() {
     </div>
   );
 }
-
-const docs = [
-  { name: "Denial letter", status: "done" },
-  { name: "Explanation of Benefits", status: "done" },
-  { name: "Physician referral", status: "done" },
-  { name: "Authorization confirmation", status: "done" },
-  { name: "Medical bill", status: null },
-];

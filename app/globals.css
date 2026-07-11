@@ -128,3 +128,49 @@
     @apply font-sans;
   }
 }
+
+/* entrance animations — content fades up as it mounts. stagger with inline delays */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.rise {
+  opacity: 0;
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.fade {
+  opacity: 0;
+  animation: fade 0.8s ease forwards;
+}
+
+/* the whole app leans on these two for lift-on-hover, so keep them here not inline */
+.lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 110, 142, 0.14);
+}
+
+.press {
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.press:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(10, 58, 74, 0.22);
+}
+.press:active {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .fade { animation: none; opacity: 1; }
+  .lift, .press { transition: none; }
+}

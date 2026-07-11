@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Check, TriangleAlert, Sparkles } from "lucide-react";
 import sampleData from "@/data/sample-case.json";
 
 // alright case dashboard built in like 30 mins yessir
@@ -13,7 +14,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
         <div style={{width:"100%",maxWidth:"80rem",margin:"0 auto",padding:"0 32px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <Link href="/" style={{display:"flex",alignItems:"center",gap:"8px",textDecoration:"none"}}>
             <div style={{width:"28px",height:"28px",borderRadius:"8px",background:"linear-gradient(135deg, #006e8e 0%, #008bb2 45%, #0ea5cf 100%)",display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>
+              <Check width={15} height={15} color="#fff" strokeWidth={2.5} />
             </div>
             <span style={{fontSize:"17px",fontWeight:"600",letterSpacing:"-0.01em",color:"#0a3a4a"}}>ClaimRight</span>
           </Link>
@@ -27,18 +28,18 @@ export default function CasePage({ params: _params }: { params: { id: string } }
       <main style={{flex:1}}>
         <div style={{maxWidth:"80rem",margin:"0 auto",padding:"48px 32px"}}>
           {/* header and alert */}
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:"24px",marginBottom:"32px"}}>
+          <div className="rise" style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:"24px",marginBottom:"32px"}}>
             <div>
               <h1 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Case summary</h1>
               <p style={{fontSize:"15px",color:"#40525c",margin:0}}>Every field is linked to its source document.</p>
             </div>
             <div style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"8px 16px",borderRadius:"9999px",background:"#fdf3f3",border:"1px solid rgba(163,58,58,0.3)"}}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a33a3a" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+              <TriangleAlert width={14} height={14} color="#a33a3a" strokeWidth={2} />
               <span style={{fontSize:"13px",fontWeight:"600",color:"#a33a3a"}}>Potential discrepancy detected</span>
             </div>
           </div>
 
-          <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",overflow:"hidden"}}>
+          <div className="rise" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",overflow:"hidden",animationDelay:"80ms"}}>
             {/* service row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Service</span>
@@ -84,7 +85,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           </div>
 
           {/* discrepancy card is the main thing here, the whole point tbh */}
-          <div style={{marginTop:"48px"}}>
+          <div className="rise" style={{marginTop:"48px",animationDelay:"160ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Discrepancy review</h2>
             <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px",maxWidth:"720px"}}>Our rule engine compares extracted facts across documents before any explanation is generated. This finding is presented for your review — it does not mean the insurer is wrong.</p>
 
@@ -93,7 +94,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               <div style={{position:"absolute",top:0,left:0,right:0,height:"3px",background:"linear-gradient(135deg, #006e8e 0%, #008bb2 45%, #0ea5cf 100%)"}}></div>
               <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"12px"}}>
                 <span style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"4px 12px",borderRadius:"9999px",background:"#fdf3f3",border:"1px solid rgba(163,58,58,0.3)",fontSize:"12px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#a33a3a"}}>Major potential discrepancy</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"4px 10px 4px 8px",borderRadius:"9999px",background:"#eef7fb",border:"1px solid #b9e1ed",fontSize:"13px",fontWeight:"500",color:"#008bb2"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path></svg>Verified by rule engine</span>
+                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"4px 10px 4px 8px",borderRadius:"9999px",background:"#eef7fb",border:"1px solid #b9e1ed",fontSize:"13px",fontWeight:"500",color:"#008bb2"}}><Sparkles width={12} height={12} />Verified by rule engine</span>
               </div>
               <p style={{fontSize:"17px",lineHeight:"1.6",color:"#0a3a4a",margin:0,maxWidth:"800px"}}>The denial states that no prior authorization was received. However, the uploaded authorization confirmation appears to approve the same MRI, provider, and service date.</p>
               <div style={{display:"flex",alignItems:"center",gap:"8px",marginTop:"16px"}}>
@@ -109,17 +110,17 @@ export default function CasePage({ params: _params }: { params: { id: string } }
 
             {/* three cards showing the contradiction - keeps them side by side so you can see the issue */}
             <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:"20px",marginBottom:"32px"}}>
-              <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
+              <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#a33a3a"}}>Insurer statement</span>
-                <p style={{fontFamily:"'Cormorant Garamond', serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>"No prior authorization was received."</p>
+                <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>"No prior authorization was received."</p>
                 <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px",alignSelf:"flex-start"}}>Denial Letter, p.1</span>
               </div>
-              <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
+              <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#008bb2"}}>Conflicting evidence</span>
-                <p style={{fontFamily:"'Cormorant Garamond', serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>"Authorization PA-48391 approved for MRI services."</p>
+                <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>"Authorization PA-48391 approved for MRI services."</p>
                 <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px",alignSelf:"flex-start"}}>Authorization Confirmation, p.1</span>
               </div>
-              <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
+              <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#3f7a4a"}}>Date validation</span>
                 <p style={{fontSize:"15px",lineHeight:"1.55",color:"#0a3a4a",margin:0,flex:1}}>The MRI on July 2, 2026 occurred during the authorization validity period of June 20 – July 20, 2026.</p>
                 <div style={{display:"flex",flexWrap:"wrap",gap:"6px"}}>
@@ -133,17 +134,17 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px"}}>
               <h3 style={{fontSize:"14px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a8a93",margin:"0 0 16px"}}>How this was checked</h3>
               <div style={{display:"flex",flexWrap:"wrap",gap:"10px"}}>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"></path></svg>Patient matches</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"></path></svg>Provider matches</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"></path></svg>Service matches</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"></path></svg>Service date within validity period</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"></path></svg>Authorization status approved</span>
+                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Patient matches</span>
+                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Provider matches</span>
+                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Service matches</span>
+                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Service date within validity period</span>
+                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Authorization status approved</span>
               </div>
             </div>
           </div>
 
           {/* timeline - just dates and events connected by a line */}
-          <div style={{marginTop:"48px"}}>
+          <div className="rise" style={{marginTop:"48px",animationDelay:"200ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Case timeline</h2>
             <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 40px"}}>Assembled by connecting dates across all five documents.</p>
 
@@ -183,7 +184,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           </div>
 
           {/* evidence checklist - what u got vs what might help */}
-          <div style={{marginTop:"48px"}}>
+          <div className="rise" style={{marginTop:"48px",animationDelay:"240ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Evidence checklist</h2>
             <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>What you have, and what may strengthen the case.</p>
 
@@ -192,11 +193,11 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"28px"}}>
                 <h3 style={{fontSize:"14px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#3f7a4a",margin:"0 0 20px"}}>Already available</h3>
                 <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Denial letter</div>
-                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Explanation of Benefits</div>
-                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Physician referral</div>
-                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Authorization confirmation</div>
-                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Medical bill</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />Denial letter</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />Explanation of Benefits</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />Physician referral</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />Authorization confirmation</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />Medical bill</div>
                 </div>
               </div>
 
@@ -226,7 +227,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           </div>
 
           {/* appeal builder - the final output, user can edit before submitting */}
-          <div style={{marginTop:"48px"}}>
+          <div className="rise" style={{marginTop:"48px",animationDelay:"280ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Appeal draft</h2>
             <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>Generated from verified facts only. Review, edit, and customize before sending.</p>
 
@@ -258,10 +259,10 @@ export default function CasePage({ params: _params }: { params: { id: string } }
 
             {/* edit actions */}
             <div style={{display:"flex",gap:"12px",marginBottom:"24px"}}>
-              <button style={{padding:"10px 16px",background:"#0a3a4a",color:"#f5fafc",border:"none",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Edit letter</button>
-              <button style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Regenerate wording</button>
-              <button style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Remove facts</button>
-              <button style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Review citations</button>
+              <button className="press" style={{padding:"10px 16px",background:"#0a3a4a",color:"#f5fafc",border:"none",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Edit letter</button>
+              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Regenerate wording</button>
+              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Remove facts</button>
+              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Review citations</button>
             </div>
 
             {/* supporting docs section */}
