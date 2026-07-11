@@ -181,6 +181,49 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               </div>
             </div>
           </div>
+
+          {/* evidence checklist - what u got vs what might help */}
+          <div style={{marginTop:"48px"}}>
+            <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Evidence checklist</h2>
+            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>What you have, and what may strengthen the case.</p>
+
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"24px",alignItems:"start"}}>
+              {/* left: already have */}
+              <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"28px"}}>
+                <h3 style={{fontSize:"14px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#3f7a4a",margin:"0 0 20px"}}>Already available</h3>
+                <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Denial letter</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Explanation of Benefits</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Physician referral</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Authorization confirmation</div>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",fontSize:"14px",color:"#0a3a4a"}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3f7a4a" strokeWidth="2"><path d="M20 6 9 17l-5-5"></path></svg>Medical bill</div>
+                </div>
+              </div>
+
+              {/* right: consider requesting */}
+              <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"28px"}}>
+                <h3 style={{fontSize:"14px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#40525c",margin:"0 0 20px"}}>Consider requesting</h3>
+                <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+                  <div>
+                    <div style={{fontSize:"14px",fontWeight:"500",color:"#0a3a4a"}}>Claim submission record</div>
+                    <p style={{fontSize:"13px",color:"#40525c",margin:"4px 0 0"}}>May show whether the provider included the authorization number when submitting the claim.</p>
+                  </div>
+                  <div>
+                    <div style={{fontSize:"14px",fontWeight:"500",color:"#0a3a4a"}}>Insurer authorization log</div>
+                    <p style={{fontSize:"13px",color:"#40525c",margin:"4px 0 0"}}>May show the insurer's internal record of submitted authorizations.</p>
+                  </div>
+                  <div>
+                    <div style={{fontSize:"14px",fontWeight:"500",color:"#0a3a4a"}}>Provider billing notes</div>
+                    <p style={{fontSize:"13px",color:"#40525c",margin:"4px 0 0"}}>May document the authorization request and approval timeline.</p>
+                  </div>
+                  <div>
+                    <div style={{fontSize:"14px",fontWeight:"500",color:"#0a3a4a"}}>Relevant plan language</div>
+                    <p style={{fontSize:"13px",color:"#40525c",margin:"4px 0 0"}}>May clarify specific requirements for prior authorization in your policy.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
