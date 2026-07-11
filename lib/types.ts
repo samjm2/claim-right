@@ -1,4 +1,4 @@
-//okay this is good i think i can just use this file to define all the types for the project.
+// alright all the types here, this should cover everything for now
 
 export type FactStatus = "verified" | "inferred" | "unclear";
 
