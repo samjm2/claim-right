@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Check, TriangleAlert, Sparkles } from "lucide-react";
 import sampleData from "@/data/sample-case.json";
 import { detectDiscrepancies } from "@/lib/rule-engine/engine";
-import { CaseDocument, ExtractedFact } from "@/lib/types";
+import { generateAppeal } from "@/lib/appeal/generate";
+import { CaseDocument, ExtractedFact, TimelineEvent } from "@/lib/types";
 
 // alright case dashboard built in like 30 mins yessir
 export default function CasePage({ params: _params }: { params: { id: string } }) {
@@ -14,6 +15,9 @@ export default function CasePage({ params: _params }: { params: { id: string } }
   // change a date in the sample data and this recomputes.
   const disc = detectDiscrepancies(c.facts as ExtractedFact[], c.documents as CaseDocument[])[0];
   const filledDots = Math.round(disc.confidence * 4);
+
+  // and the appeal letter is written from those same facts — nothing hardcoded
+  const appeal = generateAppeal(c.facts as ExtractedFact[], c.documents as CaseDocument[], disc, c.timeline as TimelineEvent[]);
 
   return (
     <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",background:"#f5fafc"}}>
@@ -236,31 +240,20 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Appeal draft</h2>
             <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>Generated from verified facts only. Review, edit, and customize before sending.</p>
 
-            {/* the letter itself */}
+            {/* the letter itself - every line comes from generateAppeal() */}
             <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"32px",marginBottom:"24px"}}>
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>Dear Appeals Department,</p>
-
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>I am writing to request an internal review of the denial of my claim for a knee MRI performed on July 2, 2026, at Lakeshore Imaging Center. My claim number is CLM-2026-48822, and my member ID is M-772910.</p>
-
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>Your denial letter, dated July 14, 2026, states that the claim was denied because "no prior authorization was received." However, I have an authorization confirmation (PA-48391) indicating that the MRI was approved and the authorization was valid during the service date of July 2, 2026.</p>
-
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>The timeline of events is as follows:
-              <br/>• June 18, 2026: Physician ordered MRI
-              <br/>• June 20, 2026: Authorization PA-48391 approved
-              <br/>• July 2, 2026: MRI performed
-              <br/>• July 10, 2026: Claim processed
-              <br/>• July 14, 2026: Claim denied</p>
-
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>The authorization confirmation shows that the authorization was valid from June 20, 2026, to July 20, 2026. The MRI was performed on July 2, 2026, which falls within this validity period.</p>
-
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>I respectfully request that you review this claim in light of the authorization documentation I have provided. I believe the claim should be approved, and I request that the $4,800 be paid in accordance with my plan benefits.</p>
-
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>Thank you for your prompt attention to this matter. Please contact me if you need any additional information.</p>
-
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:0}}>Sincerely,
-              <br/>Maya Rodriguez
-              <br/>Member ID: M-772910</p>
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>{appeal.greeting}</p>
+              {appeal.paragraphs.map((para,i)=>(
+                <p key={i} style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px",whiteSpace:"pre-line"}}>{para}</p>
+              ))}
+              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:0,whiteSpace:"pre-line"}}>{appeal.signoff.join("\n")}</p>
             </div>
+
+            {appeal.omitted.length > 0 && (
+              <div style={{background:"#fdfaf3",border:"1px solid #e8dcc0",borderRadius:"12px",padding:"14px 18px",marginBottom:"24px",fontSize:"13px",color:"#8a6d3b"}}>
+                Left blank because we couldn&apos;t verify it from your documents: {appeal.omitted.join(", ")}. Fill these in before sending.
+              </div>
+            )}
 
             {/* edit actions */}
             <div style={{display:"flex",gap:"12px",marginBottom:"24px"}}>
@@ -274,10 +267,9 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px"}}>
               <h3 style={{fontSize:"14px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a8a93",margin:"0 0 16px"}}>Attachments</h3>
               <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
-                <div style={{fontSize:"14px",color:"#0a3a4a"}}>1. Authorization Confirmation (PA-48391)</div>
-                <div style={{fontSize:"14px",color:"#0a3a4a"}}>2. Explanation of Benefits</div>
-                <div style={{fontSize:"14px",color:"#0a3a4a"}}>3. Medical Bill</div>
-                <div style={{fontSize:"14px",color:"#0a3a4a"}}>4. Physician Referral</div>
+                {appeal.attachments.map((att,i)=>(
+                  <div key={att} style={{fontSize:"14px",color:"#0a3a4a"}}>{i+1}. {att}</div>
+                ))}
               </div>
             </div>
           </div>

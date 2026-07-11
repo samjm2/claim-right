@@ -91,6 +91,12 @@ export function dateInRange(date: Date, from: Date, to: Date): boolean {
   return d >= from.getTime() && d <= to.getTime();
 }
 
+// "2026-07-02" -> "July 2, 2026" for anything user-facing. leaves unparseable input alone.
+export function formatDate(s: string): string {
+  const d = parseDate(s);
+  return d ? d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : s;
+}
+
 export function parseMoney(s: string): number {
   return Number(s.replace(/[^0-9.]/g, ""));
 }

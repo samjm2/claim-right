@@ -1,5 +1,5 @@
 import { CaseDocument, DiscrepancyResult, DiscrepancyCheck, ExtractedFact, FactRef } from "@/lib/types";
-import { namesMatch, providersMatch, servicesMatch, parseDate, dateInRange } from "./normalize";
+import { namesMatch, providersMatch, servicesMatch, parseDate, dateInRange, formatDate } from "./normalize";
 
 // the whole product hinges on this file: given the facts we pulled off the documents,
 // derive contradictions deterministically. no AI, no guessing — the same facts always
@@ -140,8 +140,8 @@ function authorizationConflictRule(idx: FactIndex): DiscrepancyResult | null {
   const summary =
     `The denial states "${denialReason.value}." However, authorization ${authNumber?.value ?? "on file"} ` +
     `approves the same service for ${authPatient?.value ?? "this patient"} at ${authProvider?.value ?? "this provider"}` +
-    (validFrom && validUntil ? `, valid ${validFrom.value} through ${validUntil.value}` : "") +
-    (serviceDate ? `, covering the service date of ${serviceDate.value}.` : ".");
+    (validFrom && validUntil ? `, valid ${formatDate(validFrom.value)} through ${formatDate(validUntil.value)}` : "") +
+    (serviceDate ? `, covering the service date of ${formatDate(serviceDate.value)}.` : ".");
 
   return {
     id: "disc-auth-conflict",
