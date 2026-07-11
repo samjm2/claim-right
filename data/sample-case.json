@@ -1,0 +1,114 @@
+
+{
+  "case": {
+    "id": "case-maya-mri",
+    "name": "Maya MRI denial",
+    "state": "Illinois",
+    "insuranceType": "Employer-sponsored private insurance",
+    "treatmentOccurred": true,
+    "urgentCare": false,
+    "createdAt": "2026-07-14T09:00:00.000Z"
+  },
+  "documents": [
+    {
+      "id": "doc-denial-letter",
+      "caseId": "case-maya-mri",
+      "filename": "denial-letter.pdf",
+      "documentType": "denial_letter",
+      "status": "verified",
+      "pageCount": 1
+    },
+    {
+      "id": "doc-eob",
+      "caseId": "case-maya-mri",
+      "filename": "eob.pdf",
+      "documentType": "eob",
+      "status": "verified",
+      "pageCount": 1
+    },
+    {
+      "id": "doc-referral",
+      "caseId": "case-maya-mri",
+      "filename": "physician-referral.pdf",
+      "documentType": "physician_referral",
+      "status": "verified",
+      "pageCount": 1
+    },
+    {
+      "id": "doc-authorization",
+      "caseId": "case-maya-mri",
+      "filename": "authorization-confirmation.pdf",
+      "documentType": "authorization_confirmation",
+      "status": "verified",
+      "pageCount": 1
+    },
+    {
+      "id": "doc-medical-bill",
+      "caseId": "case-maya-mri",
+      "filename": "medical-bill.pdf",
+      "documentType": "medical_bill",
+      "status": "needs_review",
+      "pageCount": 1
+    }
+  ],
+  "facts": [
+    { "id": "fact-1",
+     "documentId": "doc-denial-letter", "fieldName": "patientName", "value": "Maya Rodriguez", "page": 1, "evidenceText": "Patient: Maya Rodriguez", "confidence": 0.99, "status": "verified", "userConfirmed": false },
+    { "id": "fact-2", "documentId": "doc-denial-letter", "fieldName": "memberId", "value": "M-772910", "page": 1, "evidenceText": "Member ID: M-772910", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-3", "documentId": "doc-denial-letter", "fieldName": "claimNumber", "value": "CLM-2026-48822", "page": 1, "evidenceText": "Claim Number: CLM-2026-48822", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-4", "documentId": "doc-denial-letter", "fieldName": "serviceDate", "value": "2026-07-02", "page": 1, "evidenceText": "Date of Service: July 2, 2026", "confidence": 0.97, "status": "verified", "userConfirmed": false },
+    { "id": "fact-5", "documentId": "doc-denial-letter", "fieldName": "provider", "value": "Lakeshore Imaging Center", "page": 1, "evidenceText": "Provider: Lakeshore Imaging Center", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-6", "documentId": "doc-denial-letter", "fieldName": "deniedAmount", "value": "4800", "page": 1, "evidenceText": "Denied Amount: $4,800.00", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-7", "documentId": "doc-denial-letter", "fieldName": "denialReason", "value": "No prior authorization was received", "page": 1, "evidenceText": "Reason for Denial: No prior authorization was received for this service.", "confidence": 0.97, "status": "verified", "userConfirmed": false },
+    { "id": "fact-8", "documentId": "doc-denial-letter", "fieldName": "denialCode", "value": "CO-197", "page": 1, "evidenceText": "Denial Code: CO-197", "confidence": 0.95, "status": "verified", "userConfirmed": false },
+    { "id": "fact-9", "documentId": "doc-denial-letter", "fieldName": "appealDeadline", "value": "2026-09-08", "page": 1, "evidenceText": "You must submit an appeal by September 8, 2026.", "confidence": 0.97, "status": "verified", "userConfirmed": false },
+    { "id": "fact-10", "documentId": "doc-denial-letter", "fieldName": "appealAddress", "value": "PO Box 6210, Springfield, IL 62701", "page": 1, "evidenceText": "Mail appeals to: PO Box 6210, Springfield, IL 62701", "confidence": 0.9, "status": "verified", "userConfirmed": false },
+    { "id": "fact-11", "documentId": "doc-eob", "fieldName": "provider", "value": "Lakeshore Imaging Center", "page": 1, "evidenceText": "Provider: Lakeshore Imaging Center", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-12", "documentId": "doc-eob", "fieldName": "service", "value": "Knee MRI", "page": 1, "evidenceText": "Service: MRI, Left Knee", "confidence": 0.96, "status": "verified", "userConfirmed": false },
+    { "id": "fact-13", "documentId": "doc-eob", "fieldName": "serviceDate", "value": "2026-07-02", "page": 1, "evidenceText": "Service Date: 07/02/2026", "confidence": 0.97, "status": "verified", "userConfirmed": false },
+    { "id": "fact-14", "documentId": "doc-eob", "fieldName": "claimNumber", "value": "CLM-2026-48822", "page": 1, "evidenceText": "Claim #: CLM-2026-48822", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-15", "documentId": "doc-eob", "fieldName": "billedAmount", "value": "4800", "page": 1, "evidenceText": "Billed Amount: $4,800.00", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-16", "documentId": "doc-eob", "fieldName": "planPaid", "value": "0", "page": 1, "evidenceText": "Plan Paid: $0.00", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-17", "documentId": "doc-eob", "fieldName": "patientResponsibility", "value": "4800", "page": 1, "evidenceText": "Patient Responsibility: $4,800.00", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-18", "documentId": "doc-eob", "fieldName": "claimStatus", "value": "denied", "page": 1, "evidenceText": "Claim Status: Denied", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    
+    { "id": "fact-19", "documentId": "doc-referral", "fieldName": "orderedService", "value": "Knee MRI", "page": 1, "evidenceText": "Order: MRI, left knee", "confidence": 0.95, "status": "verified", "userConfirmed": false },
+    { "id": "fact-20", "documentId": "doc-referral", "fieldName": "medicalReason", "value": "Persistent knee pain", "page": 1, "evidenceText": "Reason: Persistent left knee pain, suspected meniscus injury", "confidence": 0.9, "status": "verified", "userConfirmed": false },
+    { "id": "fact-21", "documentId": "doc-referral", "fieldName": "orderDate", "value": "2026-06-18", "page": 1, "evidenceText": "Order Date: June 18, 2026", "confidence": 0.96, "status": "verified", "userConfirmed": false },
+    { "id": "fact-22", "documentId": "doc-referral", "fieldName": "physicianName", "value": "Dr. Anthony Weiss", "page": 1, "evidenceText": "Ordering Physician: Dr. Anthony Weiss", "confidence": 0.95, "status": "verified", "userConfirmed": false },
+
+    { "id": "fact-23", "documentId": "doc-authorization", "fieldName": "patientName", "value": "Maya Rodriguez", "page": 1, "evidenceText": "Patient: Maya Rodriguez", "confidence": 0.99, "status": "verified", "userConfirmed": false },
+    { "id": "fact-24", "documentId": "doc-authorization", "fieldName": "authorizationNumber", "value": "PA-48391", "page": 1, "evidenceText": "Authorization Number: PA-48391", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-25", "documentId": "doc-authorization", "fieldName": "approvedService", "value": "Knee MRI", "page": 1, "evidenceText": "Approved Service: MRI, Left Knee", "confidence": 0.96, "status": "verified", "userConfirmed": false },
+    { "id": "fact-26", "documentId": "doc-authorization", "fieldName": "provider", "value": "Lakeshore Imaging Center", "page": 1, "evidenceText": "Provider: Lakeshore Imaging Center", "confidence": 0.98, "status": "verified", "userConfirmed": false },
+    { "id": "fact-27", "documentId": "doc-authorization", "fieldName": "approvalDate", "value": "2026-06-20", "page": 1, "evidenceText": "Approval Date: June 20, 2026", "confidence": 0.97, "status": "verified", "userConfirmed": false },
+    { "id": "fact-28", "documentId": "doc-authorization", "fieldName": "validFrom", "value": "2026-06-20", "page": 1, "evidenceText": "Valid From: June 20, 2026", "confidence": 0.96, "status": "verified", "userConfirmed": false },
+    { "id": "fact-29", "documentId": "doc-authorization", "fieldName": "validUntil", "value": "2026-07-20", "page": 1, "evidenceText": "Valid Until: July 20, 2026", "confidence": 0.96, "status": "verified", "userConfirmed": false },
+    { "id": "fact-30", "documentId": "doc-authorization", "fieldName": "authorizationStatus", "value": "approved", "page": 1, "evidenceText": "Status: Approved", "confidence": 0.98, "status": "verified", "userConfirmed": false }
+  ],
+  "timeline": [
+    { "id": "tl-1", "caseId": "case-maya-mri", "date": "2026-06-18", "event": "Physician ordered MRI", "sourceDocumentId": "doc-referral" },
+    { "id": "tl-2", "caseId": "case-maya-mri", "date": "2026-06-20", "event": "Authorization approved", "sourceDocumentId": "doc-authorization" },
+    { "id": "tl-3", "caseId": "case-maya-mri", "date": "2026-07-02", "event": "MRI performed", "sourceDocumentId": "doc-eob" },
+    { "id": "tl-4", "caseId": "case-maya-mri", "date": "2026-07-10", "event": "Claim processed", "sourceDocumentId": "doc-eob" },
+    { "id": "tl-5", "caseId": "case-maya-mri", "date": "2026-07-14", "event": "Claim denied", "sourceDocumentId": "doc-denial-letter" },
+    { "id": "tl-6", "caseId": "case-maya-mri", "date": "2026-09-08", "event": "Appeal deadline stated", "sourceDocumentId": "doc-denial-letter" }
+  ],
+
+  "discrepancies": [
+    {
+      "id": "disc-1",
+      "caseId": "case-maya-mri",
+      "type": "authorization_conflict",
+      "severity": "high",
+      "summary": "The denial states that no prior authorization was received. However, the uploaded authorization confirmation appears to approve the same MRI, provider, and service date.",
+      "requiresReview": true
+    }
+  ],
+  "appealDraft": {
+    "id": "appeal-1",
+    "caseId": "case-maya-mri",
+    "content": "I am requesting review of the denial for the knee MRI performed on July 2, 2026. The denial states that no prior authorization was received. However, authorization confirmation PA-48391 lists the same patient, provider, and MRI service and indicates that approval was valid on the service date.",
+    "createdAt": "2026-07-14T09:05:00.000Z"
+  }
+}
