@@ -10,6 +10,7 @@ type Step = "create" | "upload";
 
 // alr case creation and upload flow working, moved on lol
 export default function NewCasePage() {
+  // state mgmt for the two-step form
   const [step, setStep] = useState<Step>("create");
   const [name, setName] = useState("Maya MRI denial");
   const [state, setState] = useState("Illinois");
@@ -19,6 +20,7 @@ export default function NewCasePage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [done, setDone] = useState(false);
 
+  // mock upload/analysis delay
   const handleUpload = async () => {
     setAnalyzing(true);
     await new Promise((r) => setTimeout(r, 2500));
@@ -57,6 +59,7 @@ export default function NewCasePage() {
       </header>
 
       <main className="flex-1">
+        {/* step 1: form for case details */}
         {step === "create" && (
           <div className="max-w-xl mx-auto px-8 py-20">
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7a8a93" }}>
@@ -192,6 +195,7 @@ export default function NewCasePage() {
           </div>
         )}
 
+        {/* step 2: upload and analyze docs */}
         {step === "upload" && (
           <div className="max-w-2xl mx-auto px-8 py-20">
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#7a8a93" }}>

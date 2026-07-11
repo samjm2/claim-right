@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 
 // yessir landing page is doneeee
 export default function Landing() {
+  // header and nav stuff
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f5fafc" }}>
+      {/* sticky header w logo */}
       <header
         className="sticky top-0 z-50 h-16 flex items-center"
         style={{
@@ -31,7 +33,9 @@ export default function Landing() {
       </header>
 
       <main className="flex-1">
+        {/* hero section */}
         <section className="max-w-5xl mx-auto px-8 py-32 text-center">
+          {/* badge */}
           <div
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-8 text-sm font-medium border"
             style={{ background: "#eef7fb", borderColor: "#b9e1ed", color: "#008bb2" }}
@@ -76,9 +80,11 @@ export default function Landing() {
           </p>
         </section>
 
+        {/* features at bottom */}
         <section style={{ background: "#ffffff", borderTop: "1px solid #dce7ec" }}>
           <div className="max-w-5xl mx-auto px-8 py-24">
             <div className="grid grid-cols-3 gap-12">
+              {/* feature 1 */}
               <div>
                 <div className="w-10 h-10 rounded flex items-center justify-center mb-3" style={{ background: "#eef7fb" }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008bb2" strokeWidth="1.5">
