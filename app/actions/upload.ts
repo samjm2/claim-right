@@ -1,13 +1,14 @@
 'use server';
-import { CaseDocument, DocumentStatus, DocumentType as CaseDocType, ExtractedFact } from '@/lib/types';
+import { CaseDocument, DocumentStatus, DocumentType as CaseDocType, ExtractedFact, DiscrepancyResult } from '@/lib/types';
+import { detectDiscrepancies } from '@/lib/rule-engine/engine';
 // @ts-expect-error no types available
 import pdfParse from 'pdf-parse';
 
-// returns docs + facts. no AI call here — this is a demo, facts are hardcoded per doc type
+// returns docs + facts + whatever the rule engine derives from them
 export async function processUploadedFiles(
   files: FormData,
   caseId: string
-): Promise<{ docs: CaseDocument[]; facts: ExtractedFact[] }> {
+): Promise<{ docs: CaseDocument[]; facts: ExtractedFact[]; discrepancies: DiscrepancyResult[] }> {
   const docs: CaseDocument[] = [];
   const facts: ExtractedFact[] = [];
 
@@ -49,7 +50,9 @@ export async function processUploadedFiles(
     }
   }
 
-  return { docs, facts };
+  const discrepancies = detectDiscrepancies(facts, docs).map((d) => ({ ...d, caseId }));
+
+  return { docs, facts, discrepancies };
 }
 
 // hardcoded fact templates per doc type, standing in for the real AI extraction

@@ -65,6 +65,37 @@ export interface Discrepancy {
   requiresReview: boolean;
 }
 
+// points back at the exact fact + page a check relied on, so nothing is asserted without a citation
+export interface FactRef {
+  factId: string;
+  documentType: DocumentType;
+  page: number;
+  evidenceText: string;
+}
+
+// one deterministic comparison the engine ran (patient matches, date in range, etc.)
+export interface DiscrepancyCheck {
+  id: string;
+  label: string;
+  passed: boolean;
+  detail: string;
+  evidence: FactRef[];
+}
+
+// richer than Discrepancy — carries the checks and the two facts that actually conflict
+export interface DiscrepancyResult {
+  id: string;
+  caseId: string;
+  type: string;
+  severity: "low" | "medium" | "high";
+  summary: string;
+  requiresReview: boolean;
+  confidence: number;
+  checks: DiscrepancyCheck[];
+  statement: FactRef;
+  counterEvidence: FactRef;
+}
+
 export interface AppealDraft {
   id: string;
   caseId: string;

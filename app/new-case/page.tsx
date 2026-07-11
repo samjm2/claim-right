@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileText, Check, Loader, Zap, Sparkles } from "lucide-react";
 import { processUploadedFiles } from "@/app/actions/upload";
-import { CaseDocument, ExtractedFact } from "@/lib/types";
+import { CaseDocument, ExtractedFact, DiscrepancyResult } from "@/lib/types";
 
 type Step = "create" | "upload";
 
@@ -25,6 +25,7 @@ export default function NewCasePage() {
   const [done, setDone] = useState(false);
   const [uploadedDocs, setUploadedDocs] = useState<CaseDocument[]>([]);
   const [extractedFacts, setExtractedFacts] = useState<ExtractedFact[]>([]);
+  const [discrepancies, setDiscrepancies] = useState<DiscrepancyResult[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // TODO: wire up caseId from form data, rn just using placeholder
@@ -37,6 +38,7 @@ export default function NewCasePage() {
       const result = await processUploadedFiles(formData, "case-placeholder-id");
       setUploadedDocs(result.docs);
       setExtractedFacts(result.facts);
+      setDiscrepancies(result.discrepancies);
       setAnalyzing(false);
       setDone(true);
     } catch (e) {
@@ -395,12 +397,11 @@ export default function NewCasePage() {
                       </div>
                     </div>
                     <div>
-                      {/* discrepancy engine is phase 4, not built yet */}
                       <div className="text-2xl font-light" style={{ color: "#a33a3a" }}>
-                        0
+                        {discrepancies.filter((d) => d.severity === "high").length}
                       </div>
                       <div className="text-xs" style={{ color: "#40525c" }}>
-                        major discrepancy detected
+                        major {discrepancies.filter((d) => d.severity === "high").length === 1 ? "discrepancy" : "discrepancies"} detected
                       </div>
                     </div>
                     <div>

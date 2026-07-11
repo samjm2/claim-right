@@ -2,11 +2,18 @@
 import Link from "next/link";
 import { Check, TriangleAlert, Sparkles } from "lucide-react";
 import sampleData from "@/data/sample-case.json";
+import { detectDiscrepancies } from "@/lib/rule-engine/engine";
+import { CaseDocument, ExtractedFact } from "@/lib/types";
 
 // alright case dashboard built in like 30 mins yessir
 export default function CasePage({ params: _params }: { params: { id: string } }) {
   // hardcoded sample case rn
   const c = sampleData;
+
+  // the discrepancy section is derived live from the facts, not written into the json.
+  // change a date in the sample data and this recomputes.
+  const disc = detectDiscrepancies(c.facts as ExtractedFact[], c.documents as CaseDocument[])[0];
+  const filledDots = Math.round(disc.confidence * 4);
 
   return (
     <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",background:"#f5fafc"}}>
@@ -96,14 +103,11 @@ export default function CasePage({ params: _params }: { params: { id: string } }
                 <span style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"4px 12px",borderRadius:"9999px",background:"#fdf3f3",border:"1px solid rgba(163,58,58,0.3)",fontSize:"12px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#a33a3a"}}>Major potential discrepancy</span>
                 <span style={{display:"inline-flex",alignItems:"center",gap:"6px",padding:"4px 10px 4px 8px",borderRadius:"9999px",background:"#eef7fb",border:"1px solid #b9e1ed",fontSize:"13px",fontWeight:"500",color:"#008bb2"}}><Sparkles width={12} height={12} />Verified by rule engine</span>
               </div>
-              <p style={{fontSize:"17px",lineHeight:"1.6",color:"#0a3a4a",margin:0,maxWidth:"800px"}}>The denial states that no prior authorization was received. However, the uploaded authorization confirmation appears to approve the same MRI, provider, and service date.</p>
+              <p style={{fontSize:"17px",lineHeight:"1.6",color:"#0a3a4a",margin:0,maxWidth:"800px"}}>{disc.summary}</p>
               <div style={{display:"flex",alignItems:"center",gap:"8px",marginTop:"16px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a8a93"}}>Confidence</span>
                 <span style={{display:"inline-flex",gap:"3px"}}>
-                  <span style={{width:"6px",height:"6px",borderRadius:"50%",background:"#008bb2"}}></span>
-                  <span style={{width:"6px",height:"6px",borderRadius:"50%",background:"#008bb2"}}></span>
-                  <span style={{width:"6px",height:"6px",borderRadius:"50%",background:"#008bb2"}}></span>
-                  <span style={{width:"6px",height:"6px",borderRadius:"50%",background:"#c6d4db"}}></span>
+                  {[0,1,2,3].map((i)=>(<span key={i} style={{width:"6px",height:"6px",borderRadius:"50%",background: i < filledDots ? "#008bb2" : "#c6d4db"}}></span>))}
                 </span>
               </div>
             </div>
@@ -134,11 +138,12 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px"}}>
               <h3 style={{fontSize:"14px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a8a93",margin:"0 0 16px"}}>How this was checked</h3>
               <div style={{display:"flex",flexWrap:"wrap",gap:"10px"}}>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Patient matches</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Provider matches</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Service matches</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Service date within validity period</span>
-                <span style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color:"#0a3a4a",background:"#eef7fb",borderRadius:"9999px",padding:"6px 14px"}}><Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} />Authorization status approved</span>
+                {disc.checks.map((chk)=>(
+                  <span key={chk.id} title={chk.detail} style={{display:"inline-flex",alignItems:"center",gap:"6px",fontSize:"13px",color: chk.passed ? "#0a3a4a" : "#a33a3a",background: chk.passed ? "#eef7fb" : "#fdf3f3",borderRadius:"9999px",padding:"6px 14px"}}>
+                    {chk.passed ? <Check width={12} height={12} color="#3f7a4a" strokeWidth={2.5} /> : <TriangleAlert width={12} height={12} color="#a33a3a" strokeWidth={2.5} />}
+                    {chk.label}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
