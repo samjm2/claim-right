@@ -51,6 +51,18 @@ export default function NewCasePage() {
     }
   };
 
+  // grab the sample pdfs from /public so judges can try it without their own files
+  const loadDemoDocs = async () => {
+    const files = await Promise.all(
+      DEMO_PDFS.map(async (name) => {
+        const res = await fetch(`/sample-pdfs/${name}`);
+        const blob = await res.blob();
+        return new File([blob], name, { type: "application/pdf" });
+      })
+    );
+    setSelectedFiles(files);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f5fafc" }}>
       <header
@@ -286,14 +298,30 @@ export default function NewCasePage() {
                       )}
                     </>
                   ) : (
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="lift flex items-center justify-center gap-2 w-full h-24 rounded-lg border-2 border-dashed"
-                      style={{ borderColor: "#c6d4db", background: "#fafbfc", cursor: "pointer" }}
-                    >
-                      <Zap width={20} height={20} color="#008bb2" />
-                      <span style={{ color: "#40525c", fontSize: "0.95rem" }}>Click to select your PDF documents</span>
-                    </button>
+                    <>
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="lift flex items-center justify-center gap-2 w-full h-24 rounded-lg border-2 border-dashed"
+                        style={{ borderColor: "#c6d4db", background: "#fafbfc", cursor: "pointer" }}
+                      >
+                        <Zap width={20} height={20} color="#008bb2" />
+                        <span style={{ color: "#40525c", fontSize: "0.95rem" }}>Click to select your PDF documents</span>
+                      </button>
+                      {/* no denial letter handy? judges can load the maya sample set */}
+                      <div className="flex items-center gap-3 my-1">
+                        <span className="flex-1 h-px" style={{ background: "#dce7ec" }} />
+                        <span className="text-xs" style={{ color: "#7a8a93" }}>or</span>
+                        <span className="flex-1 h-px" style={{ background: "#dce7ec" }} />
+                      </div>
+                      <button
+                        onClick={loadDemoDocs}
+                        className="press flex items-center justify-center gap-2 w-full h-12 rounded-lg border"
+                        style={{ borderColor: "#b9e1ed", background: "#eef7fb", color: "#008bb2", fontSize: "0.9rem", fontWeight: 500, cursor: "pointer" }}
+                      >
+                        <Sparkles width={16} height={16} />
+                        Load the sample case (5 documents)
+                      </button>
+                    </>
                   )}
                 </div>
               </>
@@ -398,3 +426,12 @@ export default function NewCasePage() {
     </div>
   );
 }
+
+// the maya rodriguez sample set, lives in /public/sample-pdfs
+const DEMO_PDFS = [
+  "denial-letter.pdf",
+  "eob.pdf",
+  "physician-referral.pdf",
+  "authorization.pdf",
+  "medical-bill.pdf",
+];
