@@ -1,9 +1,11 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
-import { Check, TriangleAlert, Sparkles } from "lucide-react";
+import { Check, TriangleAlert, Sparkles, Download } from "lucide-react";
 import sampleData from "@/data/sample-case.json";
 import { detectDiscrepancies } from "@/lib/rule-engine/engine";
 import { generateAppeal } from "@/lib/appeal/generate";
+import { exportAppealPdf } from "@/app/actions/export";
 import { CaseDocument, ExtractedFact, TimelineEvent } from "@/lib/types";
 
 // alright case dashboard built in like 30 mins yessir
@@ -18,6 +20,20 @@ export default function CasePage({ params: _params }: { params: { id: string } }
 
   // and the appeal letter is written from those same facts — nothing hardcoded
   const appeal = generateAppeal(c.facts as ExtractedFact[], c.documents as CaseDocument[], disc, c.timeline as TimelineEvent[]);
+
+  const [exporting, setExporting] = useState(false);
+  const downloadPdf = async () => {
+    setExporting(true);
+    const base64 = await exportAppealPdf(appeal, c.case.name);
+    const bytes = Uint8Array.from(atob(base64), (ch) => ch.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${c.case.name.replace(/\s+/g, "-").toLowerCase()}-appeal.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setExporting(false);
+  };
 
   return (
     <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",background:"#f5fafc"}}>
@@ -257,7 +273,10 @@ export default function CasePage({ params: _params }: { params: { id: string } }
 
             {/* edit actions */}
             <div style={{display:"flex",gap:"12px",marginBottom:"24px"}}>
-              <button className="press" style={{padding:"10px 16px",background:"#0a3a4a",color:"#f5fafc",border:"none",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Edit letter</button>
+              <button onClick={downloadPdf} disabled={exporting} className="press" style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"10px 16px",background:"#0a3a4a",color:"#f5fafc",border:"none",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor: exporting ? "default" : "pointer",opacity: exporting ? 0.7 : 1}}>
+                <Download width={15} height={15} />{exporting ? "Preparing…" : "Download appeal (PDF)"}
+              </button>
+              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Edit letter</button>
               <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Regenerate wording</button>
               <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Remove facts</button>
               <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Review citations</button>
