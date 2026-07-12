@@ -28,6 +28,14 @@ export default function CasePage({ params: _params }: { params: { id: string } }
 
   const confidenceLabel = disc.confidence >= 0.8 ? "High confidence" : disc.confidence >= 0.5 ? "Moderate confidence" : "Low confidence";
 
+  // source drawer: click any citation to see the exact line it came from
+  const [source, setSource] = useState<{ label: string; evidence: string } | null>(null);
+  const openByField = (label: string, documentType: string, fieldName: string) => {
+    const docId = (c.documents as CaseDocument[]).find((d) => d.documentType === documentType)?.id;
+    const fact = (c.facts as ExtractedFact[]).find((f) => f.documentId === docId && f.fieldName === fieldName);
+    setSource({ label, evidence: fact?.evidenceText ?? "Evidence not found." });
+  };
+
   const [exporting, setExporting] = useState(false);
   const downloadPdf = async () => {
     setExporting(true);
@@ -78,37 +86,37 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Service</span>
               <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Knee MRI</span>
-              <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span>
+              <Cite label="EOB, p.1" onClick={()=>openByField("Service","eob","service")} />
             </div>
             {/* date row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Date of service</span>
               <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>July 2, 2026</span>
-              <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>EOB, p.1</span>
+              <Cite label="EOB, p.1" onClick={()=>openByField("Date of service","eob","serviceDate")} />
             </div>
             {/* provider row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Provider</span>
               <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Lakeshore Imaging Center</span>
-              <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span>
+              <Cite label="Denial Letter, p.1" onClick={()=>openByField("Provider","denial_letter","provider")} />
             </div>
             {/* amount row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Amount denied</span>
               <span style={{fontSize:"15px",fontWeight:"600",color:"#0a3a4a"}}>$4,800</span>
-              <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span>
+              <Cite label="Denial Letter, p.1" onClick={()=>openByField("Amount denied","denial_letter","deniedAmount")} />
             </div>
             {/* reason row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Stated reason</span>
               <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Missing prior authorization</span>
-              <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span>
+              <Cite label="Denial Letter, p.1" onClick={()=>openByField("Stated reason","denial_letter","denialReason")} />
             </div>
             {/* deadline row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Appeal deadline</span>
               <span style={{fontSize:"15px",fontWeight:"600",color:"#a33a3a"}}>September 8, 2026 (59 days left)</span>
-              <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span>
+              <Cite label="Denial Letter, p.1" onClick={()=>openByField("Appeal deadline","denial_letter","appealDeadline")} />
             </div>
             {/* status row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px"}}>
@@ -145,12 +153,12 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#a33a3a"}}>Insurer statement</span>
                 <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>&ldquo;No prior authorization was received.&rdquo;</p>
-                <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px",alignSelf:"flex-start"}}>Denial Letter, p.1</span>
+                <span style={{alignSelf:"flex-start"}}><Cite label="Denial Letter, p.1" onClick={()=>openByField("Insurer statement","denial_letter","denialReason")} /></span>
               </div>
               <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#008bb2"}}>Conflicting evidence</span>
                 <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>&ldquo;Authorization PA-48391 approved for MRI services.&rdquo;</p>
-                <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px",alignSelf:"flex-start"}}>Authorization Confirmation, p.1</span>
+                <span style={{alignSelf:"flex-start"}}><Cite label="Authorization Confirmation, p.1" onClick={()=>openByField("Conflicting evidence","authorization_confirmation","authorizationStatus")} /></span>
               </div>
               <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#3f7a4a"}}>Date validation</span>
@@ -306,6 +314,36 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           </div>
         </div>
       </main>
+
+      {/* source drawer — slides in when a citation is clicked, shows the exact extracted line */}
+      {source && (
+        <>
+          <div onClick={()=>setSource(null)} style={{position:"fixed",inset:0,background:"rgba(10,58,74,0.28)",zIndex:60}} />
+          <div style={{position:"fixed",top:0,right:0,height:"100vh",width:"420px",maxWidth:"90vw",background:"#ffffff",borderLeft:"1px solid #dce7ec",boxShadow:"-8px 0 40px rgba(0,110,142,0.14)",zIndex:61,padding:"28px",display:"flex",flexDirection:"column",gap:"20px",animation:"slideInRight 0.25s cubic-bezier(0.22,1,0.36,1)"}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a8a93"}}>Source</span>
+              <button onClick={()=>setSource(null)} style={{background:"none",border:"none",fontSize:"20px",lineHeight:1,color:"#7a8a93",cursor:"pointer"}}>×</button>
+            </div>
+            <div style={{fontSize:"15px",fontWeight:"600",color:"#0a3a4a"}}>{source.label}</div>
+            <div style={{fontSize:"13px",color:"#7a8a93"}}>Here is the exact line we read this from:</div>
+            <div style={{background:"#fffceb",border:"1px solid #f0e3b0",borderRadius:"10px",padding:"16px",fontSize:"14px",lineHeight:"1.6",color:"#0a3a4a"}}>{source.evidence}</div>
+            <div style={{marginTop:"auto",fontSize:"12px",color:"#7a8a93",lineHeight:1.5}}>Always confirm important details against your original document before acting on them.</div>
+          </div>
+        </>
+      )}
     </div>
+  );
+}
+
+// clickable citation pill — same look as before, but opens the source drawer
+function Cite({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="press"
+      style={{fontSize:"12px",color:"#008bb2",background:"#eef7fb",border:"1px solid #b9e1ed",borderRadius:"9999px",padding:"3px 10px",cursor:"pointer",whiteSpace:"nowrap"}}
+    >
+      {label}
+    </button>
   );
 }
