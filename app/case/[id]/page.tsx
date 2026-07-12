@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Check, TriangleAlert, Sparkles, Download } from "lucide-react";
 import sampleData from "@/data/sample-case.json";
 import { detectDiscrepancies } from "@/lib/rule-engine/engine";
+import { formatDate as fmtDate } from "@/lib/rule-engine/normalize";
 import { generateAppeal } from "@/lib/appeal/generate";
 import { exportAppealPdf } from "@/app/actions/export";
 import { CaseDocument, ExtractedFact, TimelineEvent } from "@/lib/types";
@@ -21,10 +22,27 @@ export default function CasePage({ params: _params }: { params: { id: string } }
   // and the appeal letter is written from those same facts — nothing hardcoded
   const appeal = generateAppeal(c.facts as ExtractedFact[], c.documents as CaseDocument[], disc, c.timeline as TimelineEvent[]);
 
-  // flatten the structured appeal into one editable block of text
-  const defaultLetter = [appeal.greeting, ...appeal.paragraphs, appeal.signoff.join("\n")].join("\n\n");
-  const [letter, setLetter] = useState(defaultLetter);
+  // the letter is composed from whichever paragraphs are switched on, so toggles rewrite it live
+  const allOn: Record<string, boolean> = Object.fromEntries(appeal.paragraphs.map((p) => [p.id, true]));
+  const composeLetter = (on: Record<string, boolean>) =>
+    [appeal.greeting, ...appeal.paragraphs.filter((p) => on[p.id]).map((p) => p.text), appeal.signoff.join("\n")].join("\n\n");
+
+  const [enabled, setEnabled] = useState<Record<string, boolean>>(allOn);
+  const [letter, setLetter] = useState(() => composeLetter(allOn));
   const [editing, setEditing] = useState(false);
+
+  const defaultLetter = composeLetter(allOn);
+  const handEdited = letter !== composeLetter(enabled); // true once the user types over the generated text
+
+  const toggleParagraph = (id: string) => {
+    const next = { ...enabled, [id]: !enabled[id] };
+    setEnabled(next);
+    setLetter(composeLetter(next)); // toggling always rebuilds, so it wins over prior hand edits
+  };
+  const resetLetter = () => {
+    setEnabled(allOn);
+    setLetter(composeLetter(allOn));
+  };
 
   const confidenceLabel = disc.confidence >= 0.8 ? "High confidence" : disc.confidence >= 0.5 ? "Moderate confidence" : "Low confidence";
 
@@ -39,7 +57,22 @@ export default function CasePage({ params: _params }: { params: { id: string } }
   const [exporting, setExporting] = useState(false);
   const downloadPdf = async () => {
     setExporting(true);
-    const base64 = await exportAppealPdf(letter, appeal.attachments, c.case.name);
+    const base64 = await exportAppealPdf({
+      caseName: c.case.name,
+      patient: appeal.signoff[1] ?? "the member",
+      letterText: letter,
+      attachments: appeal.attachments,
+      summary: [
+        { label: "Service", value: "Knee MRI" },
+        { label: "Date of service", value: "July 2, 2026" },
+        { label: "Provider", value: "Lakeshore Imaging Center" },
+        { label: "Amount denied", value: "$4,800" },
+        { label: "Stated reason", value: "Missing prior authorization" },
+        { label: "Appeal deadline", value: "September 8, 2026" },
+      ],
+      timeline: (c.timeline as TimelineEvent[]).map((t) => ({ date: fmtDate(t.date), event: t.event })),
+      discrepancy: { summary: disc.summary, severity: disc.severity },
+    });
     const bytes = Uint8Array.from(atob(base64), (ch) => ch.charCodeAt(0));
     const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
     const a = document.createElement("a");
@@ -85,45 +118,52 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             {/* service row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Service</span>
-              <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Knee MRI</span>
+              <span style={{display:"inline-flex",alignItems:"center",gap:"10px",fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Knee MRI <Trust status="verified" /></span>
               <Cite label="EOB, p.1" onClick={()=>openByField("Service","eob","service")} />
             </div>
             {/* date row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Date of service</span>
-              <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>July 2, 2026</span>
+              <span style={{display:"inline-flex",alignItems:"center",gap:"10px",fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>July 2, 2026 <Trust status="verified" /></span>
               <Cite label="EOB, p.1" onClick={()=>openByField("Date of service","eob","serviceDate")} />
             </div>
             {/* provider row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Provider</span>
-              <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Lakeshore Imaging Center</span>
+              <span style={{display:"inline-flex",alignItems:"center",gap:"10px",fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Lakeshore Imaging Center <Trust status="verified" /></span>
               <Cite label="Denial Letter, p.1" onClick={()=>openByField("Provider","denial_letter","provider")} />
             </div>
             {/* amount row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Amount denied</span>
-              <span style={{fontSize:"15px",fontWeight:"600",color:"#0a3a4a"}}>$4,800</span>
+              <span style={{display:"inline-flex",alignItems:"center",gap:"10px",fontSize:"15px",fontWeight:"600",color:"#0a3a4a"}}>$4,800 <Trust status="verified" /></span>
               <Cite label="Denial Letter, p.1" onClick={()=>openByField("Amount denied","denial_letter","deniedAmount")} />
             </div>
             {/* reason row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Stated reason</span>
-              <span style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Missing prior authorization</span>
+              <span style={{display:"inline-flex",alignItems:"center",gap:"10px",fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Missing prior authorization <Trust status="verified" /></span>
               <Cite label="Denial Letter, p.1" onClick={()=>openByField("Stated reason","denial_letter","denialReason")} />
             </div>
             {/* deadline row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Appeal deadline</span>
-              <span style={{fontSize:"15px",fontWeight:"600",color:"#a33a3a"}}>September 8, 2026 (59 days left)</span>
+              <span style={{display:"inline-flex",alignItems:"center",gap:"10px",fontSize:"15px",fontWeight:"600",color:"#a33a3a"}}>September 8, 2026 (59 days left) <Trust status="verified" /></span>
               <Cite label="Denial Letter, p.1" onClick={()=>openByField("Appeal deadline","denial_letter","appealDeadline")} />
             </div>
             {/* status row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Case status</span>
-              <span style={{fontSize:"15px",fontWeight:"500",color:"#a33a3a"}}>Potential discrepancy detected</span>
+              <span style={{display:"inline-flex",alignItems:"center",gap:"10px",fontSize:"15px",fontWeight:"500",color:"#a33a3a"}}>Potential discrepancy detected <Trust status="inferred" /></span>
               <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Rule engine</span>
             </div>
+          </div>
+
+          {/* legend so the trust vocabulary is spelled out once */}
+          <div style={{display:"flex",flexWrap:"wrap",gap:"18px",marginTop:"14px",fontSize:"12px",color:"#7a8a93"}}>
+            <span><Trust status="verified" /> directly stated and cited in a document</span>
+            <span><Trust status="inferred" /> worked out by connecting several facts</span>
+            <span><Trust status="unclear" /> missing or too low-confidence to rely on</span>
           </div>
 
           {/* discrepancy card is the main thing here, the whole point tbh */}
@@ -272,7 +312,8 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Appeal draft</h2>
             <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>Written using only the facts we could confirm. Read it over, change anything you like, and send it when it feels right.</p>
 
-            {/* the letter itself - text comes from generateAppeal(), editable in place */}
+            {/* the letter itself. structured view shows each paragraph with its sources + a toggle;
+                once you hand-edit it we fall back to plain text since edits can't map to paragraphs. */}
             <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"32px",marginBottom:"24px"}}>
               {editing ? (
                 <textarea
@@ -280,8 +321,28 @@ export default function CasePage({ params: _params }: { params: { id: string } }
                   onChange={(e)=>setLetter(e.target.value)}
                   style={{width:"100%",minHeight:"460px",border:"1px solid #c6d4db",borderRadius:"8px",padding:"16px",fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",fontFamily:"inherit",resize:"vertical",outline:"none"}}
                 />
-              ) : (
+              ) : handEdited ? (
                 <div style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",whiteSpace:"pre-line"}}>{letter}</div>
+              ) : (
+                <div style={{display:"flex",flexDirection:"column",gap:"18px"}}>
+                  <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:0}}>{appeal.greeting}</p>
+                  {appeal.paragraphs.map((p)=>(
+                    <div key={p.id} style={{opacity: enabled[p.id] ? 1 : 0.4}}>
+                      <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 8px",whiteSpace:"pre-line",textDecoration: enabled[p.id] ? "none" : "line-through"}}>{p.text}</p>
+                      <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:"6px"}}>
+                        {p.sources.map((s)=>(
+                          <Cite key={s.label} label={s.label} onClick={()=>openByField(s.label, s.documentType, s.fieldName)} />
+                        ))}
+                        {p.optional && (
+                          <button onClick={()=>toggleParagraph(p.id)} className="press" style={{fontSize:"12px",fontWeight:500,color: enabled[p.id] ? "#a33a3a" : "#3f7a4a",background:"none",border:"none",cursor:"pointer",marginLeft:"4px"}}>
+                            {enabled[p.id] ? "Remove this paragraph" : "Add back"}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:0,whiteSpace:"pre-line"}}>{appeal.signoff.join("\n")}</p>
+                </div>
               )}
             </div>
 
@@ -298,7 +359,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               </button>
               <button onClick={()=>setEditing(!editing)} className="press" style={{padding:"10px 16px",background: editing ? "#eef7fb" : "#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>{editing ? "Done editing" : "Edit letter"}</button>
               {letter !== defaultLetter && !editing && (
-                <button onClick={()=>setLetter(defaultLetter)} className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#40525c",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Reset to generated</button>
+                <button onClick={resetLetter} className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#40525c",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Reset to generated</button>
               )}
             </div>
 
@@ -333,6 +394,16 @@ export default function CasePage({ params: _params }: { params: { id: string } }
       )}
     </div>
   );
+}
+
+// trust badge — makes the verified/inferred/unclear vocabulary visible on every fact
+function Trust({ status }: { status: "verified" | "inferred" | "unclear" }) {
+  const map = {
+    verified: { label: "Verified", bg: "#e2eee4", fg: "#3f7a4a" },
+    inferred: { label: "Inferred", bg: "#eef7fb", fg: "#008bb2" },
+    unclear: { label: "Needs review", bg: "#fdf3f3", fg: "#a33a3a" },
+  }[status];
+  return <span style={{fontSize:"11px",fontWeight:600,color:map.fg,background:map.bg,borderRadius:"9999px",padding:"2px 8px",whiteSpace:"nowrap"}}>{map.label}</span>;
 }
 
 // clickable citation pill — same look as before, but opens the source drawer
