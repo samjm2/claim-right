@@ -377,7 +377,7 @@ export default function NewCasePage() {
             )}
 
             {done && (
-              <Link href="/case/sample" className="block">
+              <Link href="/reveal" className="block">
                 <div
                   className="rise lift mt-8 rounded-2xl border p-6 cursor-pointer relative overflow-hidden"
                   style={{ borderColor: "rgba(0,139,178,0.35)", background: "#f5fafc", boxShadow: "0 4px 24px rgba(0,110,142,0.12)" }}
@@ -426,7 +426,7 @@ export default function NewCasePage() {
 
                   {/* whole card is the link, so this is a styled span not a nested button */}
                   <span className="inline-flex items-center h-12 px-8 text-sm font-semibold tracking-wider uppercase rounded" style={{ background: "#0a3a4a", color: "#f5fafc" }}>
-                    Open case dashboard
+                    See what we found
                   </span>
                 </div>
               </Link>
