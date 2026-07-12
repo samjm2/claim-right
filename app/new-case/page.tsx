@@ -27,6 +27,10 @@ export default function NewCasePage() {
   const [extractedFacts, setExtractedFacts] = useState<ExtractedFact[]>([]);
   const [discrepancies, setDiscrepancies] = useState<DiscrepancyResult[]>([]);
   const [error, setError] = useState("");
+  // staged loader so judges can see it actually work through the docs, not snap to done
+  const [stage, setStage] = useState(0);
+  const [readCount, setReadCount] = useState(0);
+  const [factCount, setFactCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // TODO: wire up caseId from form data, rn just using placeholder
@@ -34,10 +38,40 @@ export default function NewCasePage() {
     if (selectedFiles.length === 0) return;
     setAnalyzing(true);
     setError("");
+    setStage(0);
+    setReadCount(0);
+    setFactCount(0);
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     try {
       const formData = new FormData();
       selectedFiles.forEach((file) => formData.append("files", file));
-      const result = await processUploadedFiles(formData, "case-placeholder-id");
+      const work = processUploadedFiles(formData, "case-placeholder-id"); // real work runs while the stages play
+
+      // stage 0 — read each document, one at a time
+      for (let i = 0; i < selectedFiles.length; i++) {
+        await sleep(360);
+        setReadCount(i + 1);
+      }
+
+      // stage 1 — extract facts, counter climbs to the real total
+      setStage(1);
+      const result = await work;
+      const total = result.facts.length;
+      const step = Math.max(1, Math.ceil(total / 14));
+      for (let n = 0; n <= total; n += step) {
+        setFactCount(Math.min(n, total));
+        await sleep(55);
+      }
+      setFactCount(total);
+
+      // stages 2–4 — the cross-document reasoning
+      setStage(2);
+      await sleep(650);
+      setStage(3);
+      await sleep(750);
+      setStage(4);
+      await sleep(850);
+
       setUploadedDocs(result.docs);
       setExtractedFacts(result.facts);
       setDiscrepancies(result.discrepancies);
@@ -49,6 +83,14 @@ export default function NewCasePage() {
       setAnalyzing(false);
     }
   };
+
+  const ANALYZE_STAGES = [
+    "Reading each document",
+    "Pulling out dates, amounts, and claim numbers",
+    "Lining up the timeline across all five",
+    "Cross-checking every fact against the others",
+    "Running the discrepancy checks",
+  ];
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -278,16 +320,23 @@ export default function NewCasePage() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            {analyzing ? (
-                              <>
-                                <Loader width={16} height={16} color="#008bb2" className="animate-spin" />
-                                <span className="text-xs font-medium" style={{ color: "#7a8a93" }}>Reading</span>
-                              </>
-                            ) : (
+                            {!analyzing ? (
                               <>
                                 <Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />
                                 <span className="text-xs font-medium" style={{ color: "#7a8a93" }}>Ready</span>
                               </>
+                            ) : i < readCount || stage >= 1 ? (
+                              <>
+                                <Check width={16} height={16} color="#3f7a4a" strokeWidth={2} />
+                                <span className="text-xs font-medium" style={{ color: "#3f7a4a" }}>Read</span>
+                              </>
+                            ) : i === readCount ? (
+                              <>
+                                <Loader width={16} height={16} color="#008bb2" className="animate-spin" />
+                                <span className="text-xs font-medium" style={{ color: "#008bb2" }}>Reading</span>
+                              </>
+                            ) : (
+                              <span className="text-xs font-medium" style={{ color: "#c6d4db" }}>Queued</span>
                             )}
                           </div>
                         </div>
@@ -368,11 +417,30 @@ export default function NewCasePage() {
             )}
 
             {analyzing && (
-              <div className="mt-8 rounded-lg border p-4 flex items-center gap-3" style={{ borderColor: "rgba(0,139,178,0.35)", background: "rgba(0,139,178,0.05)" }}>
-                <Sparkles width="16" height="16" color="#008bb2" className="animate-spin" />
-                <span className="text-sm font-medium" style={{ color: "#006e8e" }}>
-                  Analyzing documents...
-                </span>
+              <div className="mt-8 rounded-2xl border p-6" style={{ borderColor: "rgba(0,139,178,0.35)", background: "rgba(0,139,178,0.05)" }}>
+                <div className="flex items-center gap-3 mb-5">
+                  <Sparkles width={18} height={18} color="#008bb2" className="animate-spin" />
+                  <span className="text-base font-semibold" style={{ color: "#006e8e" }}>
+                    {ANALYZE_STAGES[stage]}
+                    {stage === 1 && factCount > 0 ? ` — ${factCount} facts` : ""}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-2.5">
+                  {ANALYZE_STAGES.map((label, i) => (
+                    <div key={label} className="flex items-center gap-2.5" style={{ opacity: i <= stage ? 1 : 0.4 }}>
+                      {i < stage ? (
+                        <Check width={15} height={15} color="#3f7a4a" strokeWidth={2.5} />
+                      ) : i === stage ? (
+                        <Loader width={15} height={15} color="#008bb2" className="animate-spin" />
+                      ) : (
+                        <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: "#c6d4db", margin: "0 4px" }} />
+                      )}
+                      <span className="text-sm" style={{ color: i < stage ? "#3f7a4a" : i === stage ? "#0a3a4a" : "#7a8a93", fontWeight: i === stage ? 600 : 400 }}>
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
