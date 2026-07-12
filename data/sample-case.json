@@ -73,7 +73,7 @@
     { "id": "fact-18", "documentId": "doc-eob", "fieldName": "claimStatus", "value": "denied", "page": 1, "evidenceText": "Claim Status: Denied", "confidence": 0.98, "status": "verified", "userConfirmed": false },
     
     { "id": "fact-19", "documentId": "doc-referral", "fieldName": "orderedService", "value": "Knee MRI", "page": 1, "evidenceText": "Order: MRI, left knee", "confidence": 0.95, "status": "verified", "userConfirmed": false },
-    { "id": "fact-20", "documentId": "doc-referral", "fieldName": "medicalReason", "value": "Persistent knee pain", "page": 1, "evidenceText": "Reason: Persistent left knee pain, suspected meniscus injury", "confidence": 0.9, "status": "verified", "userConfirmed": false },
+    { "id": "fact-20", "documentId": "doc-referral", "fieldName": "medicalReason", "value": "Persistent knee pain", "page": 1, "evidenceText": "Reason: Persistent left knee pain, suspected meniscus injury", "confidence": 0.55, "status": "unclear", "userConfirmed": false },
     { "id": "fact-21", "documentId": "doc-referral", "fieldName": "orderDate", "value": "2026-06-18", "page": 1, "evidenceText": "Order Date: June 18, 2026", "confidence": 0.96, "status": "verified", "userConfirmed": false },
     { "id": "fact-22", "documentId": "doc-referral", "fieldName": "physicianName", "value": "Dr. Anthony Weiss", "page": 1, "evidenceText": "Ordering Physician: Dr. Anthony Weiss", "confidence": 0.95, "status": "verified", "userConfirmed": false },
 
