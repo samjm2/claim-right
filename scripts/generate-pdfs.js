@@ -13,129 +13,80 @@ const pdfs = [
   {
     filename: 'denial-letter.pdf',
     title: 'Claim Denial Notice',
-    content: `United Healthcare Claims Department
-July 14, 2024
+    content: `Lakeshore Regional Health Plan
+Date of Notice: July 14, 2026
 
-RE: Claim Denial - Maya Rodriguez
-Policy Number: UH-789456-01
-Claim Number: CLM-2024-556789
+Patient: Maya Rodriguez
+Member ID: M-772910
+Claim Number: CLM-2026-48822
+Provider: Lakeshore Imaging Center
+Service: Knee MRI
+Date of Service: July 2, 2026
+Denied Amount: $4,800.00
+Denial Code: CO-197
 
-Dear Ms. Rodriguez,
+Reason for Denial: No prior authorization was received for this service.
 
-Your claim for services rendered on July 2, 2024 has been reviewed and denied.
-
-SERVICE DETAILS:
-- Provider: Lakeshore Imaging Center
-- Service: Knee MRI
-- Service Date: July 2, 2024
-- Amount Billed: $4,800.00
-
-DENIAL REASON:
-No prior authorization was received for this service. Our records indicate no authorization PA-48391 approval in our system.
-
-You have 60 days from this notice to file an appeal. To appeal this decision, please submit any additional documentation to our Appeals Department.
-
-Sincerely,
-United Healthcare Claims Department`,
+Appeal Deadline: You must submit an appeal by September 8, 2026.
+Mail appeals to: PO Box 6210, Springfield, IL 62701
+You may request your complete claim record by contacting member services.`,
   },
   {
     filename: 'eob.pdf',
     title: 'Explanation of Benefits',
-    content: `EXPLANATION OF BENEFITS (EOB)
-Member: Maya Rodriguez
-Member ID: UH-789456-01
-Date of Service: July 2, 2024
+    content: `Explanation of Benefits (this is not a bill)
 
-Service: Knee MRI
+Patient: Maya Rodriguez
+Member ID: M-772910
 Provider: Lakeshore Imaging Center
-Amount Charged: $4,800.00
-Insurance Responsibility: $0.00
+Service: MRI, Left Knee
+Service Date: 07/02/2026
+Claim #: CLM-2026-48822
+Billed Amount: $4,800.00
+Plan Paid: $0.00
 Patient Responsibility: $4,800.00
-Status: DENIED - No Prior Authorization
-
-Claim Number: CLM-2024-556789
-Claim Received: July 10, 2024
-Processed: July 14, 2024
-
-This service was not approved and does not meet medical necessity criteria without prior authorization.`,
+Claim Status: Denied`,
   },
   {
     filename: 'physician-referral.pdf',
-    title: 'Physician Referral Form',
-    content: `PHYSICIAN REFERRAL FOR MRI
+    title: 'Physician Referral',
+    content: `Physician Referral for Imaging
 
 Patient: Maya Rodriguez
-Date of Request: June 18, 2024
-Physician: Dr. Samuel Chen, MD
-
-CLINICAL INDICATION:
-Patient presents with chronic left knee pain following a sports injury. Physical examination reveals effusion and possible meniscal tear. MRI needed to evaluate soft tissue damage.
-
-RECOMMENDED SERVICE:
-MRI of left knee with and without contrast
-
-AUTHORIZATION REQUESTED FOR:
-Service Date: July 2, 2024
-Expected Cost: $4,800
-
-Signature: Dr. Samuel Chen, MD
-License Number: IL-456789
-Date: June 18, 2024`,
+Order: MRI, left knee
+Reason: Persistent left knee pain, suspected meniscus injury
+Order Date: June 18, 2026
+Ordering Physician: Dr. Anthony Weiss`,
   },
   {
     filename: 'authorization.pdf',
     title: 'Prior Authorization Confirmation',
-    content: `PRIOR AUTHORIZATION CONFIRMATION
+    content: `Prior Authorization Confirmation
 
+Patient: Maya Rodriguez
 Authorization Number: PA-48391
-Date Issued: June 20, 2024
-Valid From: June 20, 2024
-Valid To: July 20, 2024
-
-PATIENT: Maya Rodriguez
-MEMBER ID: UH-789456-01
-PROVIDER: Lakeshore Imaging Center
-
-APPROVED SERVICE:
-MRI of left knee
-Frequency: One time
-Cost: $4,800.00
-
-AUTHORIZATION STATUS: APPROVED
-
-This authorization is valid for services rendered between the dates specified above. Services outside this authorization window or from non-network providers may not be covered.
-
-Authorized By: Claims Review Unit
-Confirmation Code: UH-PA-2024-48391-MRI`,
+Approved Service: MRI, Left Knee
+Provider: Lakeshore Imaging Center
+Approval Date: June 20, 2026
+Valid From: June 20, 2026
+Valid Until: July 20, 2026
+Status: Approved`,
   },
   {
     filename: 'medical-bill.pdf',
     title: 'Medical Bill',
-    content: `LAKESHORE IMAGING CENTER
-Invoice for Professional Services
+    content: `Lakeshore Imaging Center
+Account Number: LIC-2026-78945
 
-Bill To: Maya Rodriguez
-Date of Service: July 2, 2024
-Invoice Date: July 8, 2024
-Invoice Number: LIC-2024-78945
-
-SERVICES PROVIDED:
-MRI Knee (Left) - 2D/3D imaging with contrast
-Technical Component: $2,400.00
-Professional Interpretation: $1,600.00
-Facility Fee: $800.00
-
-TOTAL CHARGES: $4,800.00
-
-Prior Authorization: PA-48391 (Submitted to Insurer)
-Expected Insurance Payment: $4,000.00
-Patient Responsibility: $800.00
-
-Please contact our billing department with questions.
-Lakeshore Imaging Center
-Phone: (555) 234-5678`,
+Patient: Maya Rodriguez
+Provider: Lakeshore Imaging Center
+Service: Knee MRI
+Date of Service: July 2, 2026
+Total Charges: $4,800.00
+Balance Due: $4,800.00`,
   },
 ];
+
 
 async function generatePDFs() {
   for (const pdf of pdfs) {
