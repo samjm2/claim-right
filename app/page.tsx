@@ -21,7 +21,7 @@ export default function Landing() {
             </div>
             <span className="text-lg font-semibold" style={{ color: "#0a3a4a" }}>ClaimRight</span>
           </Link>
-          <span className="text-xs" style={{ color: "#7a8a93" }}>Sample data — fictional case</span>
+          <span className="text-xs" style={{ color: "#7a8a93" }}>This is a sample case with made-up details</span>
         </div>
       </header>
 
@@ -50,8 +50,8 @@ export default function Landing() {
           </h1>
 
           <p className="rise text-lg max-w-xl mx-auto mb-10" style={{ color: "#40525c", lineHeight: 1.7, animationDelay: "160ms" }}>
-            Insurance denials are written to be confusing. Upload the letters you were sent and we&apos;ll walk through
-            what actually happened — in plain language, with every fact traced back to the page it came from.
+            Insurance denials are written to be confusing. Send us the letters you got and we&apos;ll walk you through
+            what actually happened, in plain words, with every detail pointing back to the exact page it came from.
           </p>
 
           <div className="rise" style={{ animationDelay: "240ms" }}>
@@ -96,16 +96,16 @@ const features = [
   {
     icon: FileSearch,
     title: "We read every page for you",
-    body: "Dates, dollar amounts, claim numbers — pulled out of the fine print and shown with a link to exactly where each one appears. Nothing to hunt for.",
+    body: "We pull the dates, dollar amounts, and claim numbers out of the fine print and show you exactly where each one came from, so there's nothing left to go hunting for.",
   },
   {
     icon: GitCompare,
     title: "We find where it doesn't add up",
-    body: "Your documents get checked against each other. When the denial says one thing and your own paperwork says another, you'll see it laid out side by side.",
+    body: "We check your documents against each other, and when the denial says one thing while your own paperwork says another, we put them side by side so you can see it.",
   },
   {
     icon: PenLine,
     title: "We write the first draft",
-    body: "A clear, factual appeal letter built only from what your documents actually prove. It's yours to read, change, and send when you're ready.",
+    body: "We put together a clear appeal letter using only what your documents actually prove. It's yours to read over, change, and send whenever you feel ready.",
   },
 ];

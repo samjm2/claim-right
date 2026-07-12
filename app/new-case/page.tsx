@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Check, Loader, Zap, Sparkles } from "lucide-react";
+import { FileText, Check, Loader, Zap, Sparkles, TriangleAlert } from "lucide-react";
 import { processUploadedFiles } from "@/app/actions/upload";
 import { CaseDocument, ExtractedFact, DiscrepancyResult } from "@/lib/types";
 
@@ -26,12 +26,14 @@ export default function NewCasePage() {
   const [uploadedDocs, setUploadedDocs] = useState<CaseDocument[]>([]);
   const [extractedFacts, setExtractedFacts] = useState<ExtractedFact[]>([]);
   const [discrepancies, setDiscrepancies] = useState<DiscrepancyResult[]>([]);
+  const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // TODO: wire up caseId from form data, rn just using placeholder
   const handleUpload = async () => {
     if (selectedFiles.length === 0) return;
     setAnalyzing(true);
+    setError("");
     try {
       const formData = new FormData();
       selectedFiles.forEach((file) => formData.append("files", file));
@@ -43,6 +45,7 @@ export default function NewCasePage() {
       setDone(true);
     } catch (e) {
       console.error("Upload failed:", e);
+      setError("Something went wrong reading your documents. Please try again.");
       setAnalyzing(false);
     }
   };
@@ -89,7 +92,7 @@ export default function NewCasePage() {
               ClaimRight
             </span>
           </Link>
-          {step === "upload" && <span className="text-xs" style={{ color: "#7a8a93" }}>Sample data — fictional case</span>}
+          {step === "upload" && <span className="text-xs" style={{ color: "#7a8a93" }}>This is a sample case with made-up details</span>}
         </div>
       </header>
 
@@ -104,7 +107,7 @@ export default function NewCasePage() {
               Create your case
             </h1>
             <p className="text-base mb-10" style={{ color: "#40525c" }}>
-              A few details help us organize your documents. This does not determine legal eligibility.
+              Just a few details so we can keep your documents organized. None of this affects whether your claim is eligible.
             </p>
 
             <div className="bg-white rounded-2xl border p-8 flex flex-col gap-6" style={{ borderColor: "#dce7ec" }}>
@@ -125,7 +128,7 @@ export default function NewCasePage() {
                 <div>
                   <Label className="text-sm font-semibold mb-2 block">State</Label>
                   <Select value={state} onValueChange={(val) => setState(val || "")}>
-                    <SelectTrigger className="h-11" style={{ borderColor: "#c6d4db", color: "#0a3a4a" }}>
+                    <SelectTrigger className="h-11 w-full" style={{ borderColor: "#c6d4db", color: "#0a3a4a" }}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -140,7 +143,7 @@ export default function NewCasePage() {
                 <div>
                   <Label className="text-sm font-semibold mb-2 block">Insurance type</Label>
                   <Select value={insurance} onValueChange={(val) => setInsurance(val || "")}>
-                    <SelectTrigger className="h-11" style={{ borderColor: "#c6d4db", color: "#0a3a4a" }}>
+                    <SelectTrigger className="h-11 w-full" style={{ borderColor: "#c6d4db", color: "#0a3a4a" }}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -240,7 +243,7 @@ export default function NewCasePage() {
               Upload your claim documents
             </h1>
             <p className="text-base mb-10" style={{ color: "#40525c" }}>
-              Add whichever documents you have. More documents mean stronger cross-checking.
+              Add whatever documents you have on hand. The more you share, the more we can cross-check for you.
             </p>
 
             {!done && (
@@ -327,6 +330,13 @@ export default function NewCasePage() {
                   )}
                 </div>
               </>
+            )}
+
+            {error && (
+              <div className="rise mb-6 rounded-lg border p-4 flex items-center gap-3" style={{ borderColor: "rgba(163,58,58,0.35)", background: "#fdf3f3" }}>
+                <TriangleAlert width={16} height={16} color="#a33a3a" />
+                <span className="text-sm font-medium" style={{ color: "#a33a3a" }}>{error}</span>
+              </div>
             )}
 
             {!analyzing && !done && (

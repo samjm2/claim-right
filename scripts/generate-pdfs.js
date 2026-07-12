@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+// standalone node script, run manually to (re)generate the sample pdfs. commonjs on purpose.
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');

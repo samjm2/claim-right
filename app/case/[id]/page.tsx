@@ -21,10 +21,17 @@ export default function CasePage({ params: _params }: { params: { id: string } }
   // and the appeal letter is written from those same facts — nothing hardcoded
   const appeal = generateAppeal(c.facts as ExtractedFact[], c.documents as CaseDocument[], disc, c.timeline as TimelineEvent[]);
 
+  // flatten the structured appeal into one editable block of text
+  const defaultLetter = [appeal.greeting, ...appeal.paragraphs, appeal.signoff.join("\n")].join("\n\n");
+  const [letter, setLetter] = useState(defaultLetter);
+  const [editing, setEditing] = useState(false);
+
+  const confidenceLabel = disc.confidence >= 0.8 ? "High confidence" : disc.confidence >= 0.5 ? "Moderate confidence" : "Low confidence";
+
   const [exporting, setExporting] = useState(false);
   const downloadPdf = async () => {
     setExporting(true);
-    const base64 = await exportAppealPdf(appeal, c.case.name);
+    const base64 = await exportAppealPdf(letter, appeal.attachments, c.case.name);
     const bytes = Uint8Array.from(atob(base64), (ch) => ch.charCodeAt(0));
     const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
     const a = document.createElement("a");
@@ -58,7 +65,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           <div className="rise" style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:"24px",marginBottom:"32px"}}>
             <div>
               <h1 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Case summary</h1>
-              <p style={{fontSize:"15px",color:"#40525c",margin:0}}>Every field is linked to its source document.</p>
+              <p style={{fontSize:"15px",color:"#40525c",margin:0}}>Everything here points back to the document it came from.</p>
             </div>
             <div style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"8px 16px",borderRadius:"9999px",background:"#fdf3f3",border:"1px solid rgba(163,58,58,0.3)"}}>
               <TriangleAlert width={14} height={14} color="#a33a3a" strokeWidth={2} />
@@ -100,7 +107,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             {/* deadline row */}
             <div style={{display:"grid",gridTemplateColumns:"200px 1fr auto",gap:"16px",alignItems:"center",padding:"18px 24px",borderBottom:"1px solid #dce7ec"}}>
               <span style={{fontSize:"13px",fontWeight:"600",color:"#7a8a93"}}>Appeal deadline</span>
-              <span style={{fontSize:"15px",fontWeight:"600",color:"#a33a3a"}}>September 8, 2026 — 59 days remaining</span>
+              <span style={{fontSize:"15px",fontWeight:"600",color:"#a33a3a"}}>September 8, 2026 (59 days left)</span>
               <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span>
             </div>
             {/* status row */}
@@ -114,7 +121,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           {/* discrepancy card is the main thing here, the whole point tbh */}
           <div className="rise" style={{marginTop:"48px",animationDelay:"160ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Discrepancy review</h2>
-            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px",maxWidth:"720px"}}>Our rule engine compares extracted facts across documents before any explanation is generated. This finding is presented for your review — it does not mean the insurer is wrong.</p>
+            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px",maxWidth:"720px"}}>We line up the facts from each of your documents and check them against each other before writing anything. This is here for you to look over, and it doesn&apos;t mean the insurer got it wrong.</p>
 
             {/* banner showing the main discrepancy - using gradient top to match design */}
             <div style={{background:"#f5fafc",border:"1px solid rgba(0,139,178,0.35)",borderRadius:"16px",padding:"28px",position:"relative",overflow:"hidden",boxShadow:"0 4px 24px rgba(0,110,142,0.12)",marginBottom:"32px"}}>
@@ -129,6 +136,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
                 <span style={{display:"inline-flex",gap:"3px"}}>
                   {[0,1,2,3].map((i)=>(<span key={i} style={{width:"6px",height:"6px",borderRadius:"50%",background: i < filledDots ? "#008bb2" : "#c6d4db"}}></span>))}
                 </span>
+                <span style={{fontSize:"13px",fontWeight:"500",color:"#008bb2"}}>{confidenceLabel}</span>
               </div>
             </div>
 
@@ -136,12 +144,12 @@ export default function CasePage({ params: _params }: { params: { id: string } }
             <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:"20px",marginBottom:"32px"}}>
               <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#a33a3a"}}>Insurer statement</span>
-                <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>"No prior authorization was received."</p>
+                <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>&ldquo;No prior authorization was received.&rdquo;</p>
                 <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px",alignSelf:"flex-start"}}>Denial Letter, p.1</span>
               </div>
               <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
                 <span style={{fontSize:"12px",fontWeight:"600",letterSpacing:"0.16em",textTransform:"uppercase",color:"#008bb2"}}>Conflicting evidence</span>
-                <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>"Authorization PA-48391 approved for MRI services."</p>
+                <p style={{fontFamily:"var(--font-cormorant), serif",fontStyle:"italic",fontSize:"22px",lineHeight:"1.35",color:"#0a3a4a",margin:0,flex:1}}>&ldquo;Authorization PA-48391 approved for MRI services.&rdquo;</p>
                 <span style={{fontSize:"12px",color:"#7a8a93",background:"#f5fafc",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px",alignSelf:"flex-start"}}>Authorization Confirmation, p.1</span>
               </div>
               <div className="lift" style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"24px",display:"flex",flexDirection:"column",gap:"12px"}}>
@@ -171,7 +179,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           {/* timeline - just dates and events connected by a line */}
           <div className="rise" style={{marginTop:"48px",animationDelay:"200ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Case timeline</h2>
-            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 40px"}}>Assembled by connecting dates across all five documents.</p>
+            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 40px"}}>We put this together by lining up the dates across all five of your documents.</p>
 
             <div style={{maxWidth:"760px",display:"flex",flexDirection:"column"}}>
               {/* timeline node 1 */}
@@ -198,7 +206,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
                 {/* node 5 */}
                 <div style={{textAlign:"right",paddingBottom:"40px"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#0a3a4a"}}>July 14</span></div>
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}><span style={{width:"12px",height:"12px",borderRadius:"50%",background:"#a33a3a",border:"3px solid #f3dede",flexShrink:0}}></span><span style={{width:"1px",flex:1,background:"#dce7ec"}}></span></div>
-                <div style={{paddingBottom:"40px"}}><div style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Claim denied — "no prior authorization received"</div><span style={{display:"inline-block",marginTop:"6px",fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span></div>
+                <div style={{paddingBottom:"40px"}}><div style={{fontSize:"15px",fontWeight:"500",color:"#0a3a4a"}}>Claim denied for &ldquo;no prior authorization received&rdquo;</div><span style={{display:"inline-block",marginTop:"6px",fontSize:"12px",color:"#7a8a93",background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"9999px",padding:"3px 10px"}}>Denial Letter, p.1</span></div>
 
                 {/* node 6 - final */}
                 <div style={{textAlign:"right"}}><span style={{fontSize:"14px",fontWeight:"600",color:"#a33a3a"}}>September 8</span></div>
@@ -211,7 +219,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           {/* evidence checklist - what u got vs what might help */}
           <div className="rise" style={{marginTop:"48px",animationDelay:"240ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Evidence checklist</h2>
-            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>What you have, and what may strengthen the case.</p>
+            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>What you already have, and a few things that could make your case stronger.</p>
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"24px",alignItems:"start"}}>
               {/* left: already have */}
@@ -236,7 +244,7 @@ export default function CasePage({ params: _params }: { params: { id: string } }
                   </div>
                   <div>
                     <div style={{fontSize:"14px",fontWeight:"500",color:"#0a3a4a"}}>Insurer authorization log</div>
-                    <p style={{fontSize:"13px",color:"#40525c",margin:"4px 0 0"}}>May show the insurer's internal record of submitted authorizations.</p>
+                    <p style={{fontSize:"13px",color:"#40525c",margin:"4px 0 0"}}>May show the insurer&apos;s internal record of submitted authorizations.</p>
                   </div>
                   <div>
                     <div style={{fontSize:"14px",fontWeight:"500",color:"#0a3a4a"}}>Provider billing notes</div>
@@ -254,15 +262,19 @@ export default function CasePage({ params: _params }: { params: { id: string } }
           {/* appeal builder - the final output, user can edit before submitting */}
           <div className="rise" style={{marginTop:"48px",animationDelay:"280ms"}}>
             <h2 style={{fontSize:"32px",fontWeight:"300",letterSpacing:"-0.02em",color:"#0a3a4a",margin:"0 0 6px"}}>Appeal draft</h2>
-            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>Generated from verified facts only. Review, edit, and customize before sending.</p>
+            <p style={{fontSize:"15px",color:"#40525c",margin:"0 0 32px"}}>Written using only the facts we could confirm. Read it over, change anything you like, and send it when it feels right.</p>
 
-            {/* the letter itself - every line comes from generateAppeal() */}
+            {/* the letter itself - text comes from generateAppeal(), editable in place */}
             <div style={{background:"#ffffff",border:"1px solid #dce7ec",borderRadius:"16px",padding:"32px",marginBottom:"24px"}}>
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px"}}>{appeal.greeting}</p>
-              {appeal.paragraphs.map((para,i)=>(
-                <p key={i} style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:"0 0 16px",whiteSpace:"pre-line"}}>{para}</p>
-              ))}
-              <p style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",margin:0,whiteSpace:"pre-line"}}>{appeal.signoff.join("\n")}</p>
+              {editing ? (
+                <textarea
+                  value={letter}
+                  onChange={(e)=>setLetter(e.target.value)}
+                  style={{width:"100%",minHeight:"460px",border:"1px solid #c6d4db",borderRadius:"8px",padding:"16px",fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",fontFamily:"inherit",resize:"vertical",outline:"none"}}
+                />
+              ) : (
+                <div style={{fontSize:"15px",lineHeight:"1.6",color:"#0a3a4a",whiteSpace:"pre-line"}}>{letter}</div>
+              )}
             </div>
 
             {appeal.omitted.length > 0 && (
@@ -276,10 +288,10 @@ export default function CasePage({ params: _params }: { params: { id: string } }
               <button onClick={downloadPdf} disabled={exporting} className="press" style={{display:"inline-flex",alignItems:"center",gap:"8px",padding:"10px 16px",background:"#0a3a4a",color:"#f5fafc",border:"none",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor: exporting ? "default" : "pointer",opacity: exporting ? 0.7 : 1}}>
                 <Download width={15} height={15} />{exporting ? "Preparing…" : "Download appeal (PDF)"}
               </button>
-              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Edit letter</button>
-              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Regenerate wording</button>
-              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Remove facts</button>
-              <button className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Review citations</button>
+              <button onClick={()=>setEditing(!editing)} className="press" style={{padding:"10px 16px",background: editing ? "#eef7fb" : "#ffffff",color:"#0a3a4a",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>{editing ? "Done editing" : "Edit letter"}</button>
+              {letter !== defaultLetter && !editing && (
+                <button onClick={()=>setLetter(defaultLetter)} className="press" style={{padding:"10px 16px",background:"#ffffff",color:"#40525c",border:"1px solid #dce7ec",borderRadius:"8px",fontSize:"14px",fontWeight:"500",cursor:"pointer"}}>Reset to generated</button>
+              )}
             </div>
 
             {/* supporting docs section */}
