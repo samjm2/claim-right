@@ -21,7 +21,10 @@ export default function Landing() {
             </div>
             <span className="text-lg font-semibold" style={{ color: "#0a3a4a" }}>ClaimRight</span>
           </Link>
-          <span className="text-xs" style={{ color: "#7a8a93" }}>This is a sample case with made-up details</span>
+          <div className="flex items-center gap-5">
+            <span className="text-xs" style={{ color: "#7a8a93" }}>This is a sample case with made-up details</span>
+            <Link href="/login" className="text-sm font-medium" style={{ color: "#0a3a4a" }}>Sign in</Link>
+          </div>
         </div>
       </header>
 
@@ -55,7 +58,7 @@ export default function Landing() {
           </p>
 
           <div className="rise" style={{ animationDelay: "240ms" }}>
-            <Link href="/new-case">
+            <Link href="/login">
               <Button
                 size="lg"
                 className="press mb-12 h-12 px-8 text-sm font-semibold tracking-wider uppercase"
